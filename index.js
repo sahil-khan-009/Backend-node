@@ -8,6 +8,7 @@ const adminRoutes = require('./routes/AdminRoutes');
 const registerRoute = require('./routes/RegistrationRoutes');
 const Doctors = require('./routes/DoctorRoutes')
 const bodyParser = require("body-parser");
+const port = 4000 || process.env.PORT;
 
 // const flash = require("connect-flash");
 
