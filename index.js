@@ -4,6 +4,7 @@ const app = express();
 const mongoose = require('mongoose');
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
+const cors = require('cors');
 
 const appointmentRoutes = require("./routes/AppointmentRoutes");
 const adminRoutes = require('./routes/AdminRoutes');
@@ -30,13 +31,24 @@ app.use(session({
     sameSite: 'lax'
   }
 }));
-const cors = require('cors');
+
+
 app.use(
   cors({
-    origin: 'http://localhost:5173', // Your frontend URL
-    credentials: true, // Allow credentials (cookies)
+    origin: ['http://localhost:5173', 'http://localhost:5174'], // Allow both ports
+    credentials: true, // Allow cookies & sessions
   })
 );
+
+
+// app.use(
+//   cors({
+//     origin: 'http://localhost:5174', // Your frontend URL
+//     credentials: true, // Allow credentials (cookies)
+//     httpOnly:true,
+//     sameSite:'lax'
+//   })
+// );
 
 
 // app.use(flash());
@@ -62,6 +74,7 @@ if (!MONGO_URI) {
   console.error("❌ MONGO_URI is not set in .env file!");
   process.exit(1);
 }
+
 
 mongoose
   .connect(MONGO_URI, {
