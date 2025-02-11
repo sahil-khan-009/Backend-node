@@ -43,6 +43,7 @@ module.exports.registerUser = async function (req, res) {
 // Login Module
 module.exports.loginUser = async function (req, res) {
     let { userEmail, userPassword } = req.body;
+    console.log("This is JWT key ------",process.env.JWT_KEY)
   
     let user = await userModel.findOne({ userEmail});
     if (!user) return res.send("user not found");

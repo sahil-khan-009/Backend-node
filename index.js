@@ -1,8 +1,10 @@
+require("dotenv").config();
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const cookieParser = require("cookie-parser");
-const dotenv = require("dotenv");
+const session = require("express-session");
+
 const appointmentRoutes = require("./routes/AppointmentRoutes");
 const adminRoutes = require('./routes/AdminRoutes');
 const registerRoute = require('./routes/RegistrationRoutes');
@@ -17,6 +19,17 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(bodyParser.json());
 
+app.use(session({
+  secret: process.env.JWT_KEY,// Use a strong secret in production
+  resave: false,
+  saveUninitialized: true,
+  cookie:{
+    secure: false,
+    httpOnly: true,
+    maxAge: 1000 * 60 * 60 * 24, // Equals 24 hours
+    sameSite: 'lax'
+  }
+}));
 const cors = require('cors');
 app.use(
   cors({
@@ -26,11 +39,6 @@ app.use(
 );
 
 
-// app.use(session({
-//   secret: 'hello' ,// Use a strong secret in production
-//   resave: false,
-//   saveUninitialized: true,
-// }));
 // app.use(flash());
 
 app.use("/api", appointmentRoutes);
@@ -42,22 +50,25 @@ app.use("/api/doctor",Doctors);
 
 
 
-dotenv.config();
+
 
 
 app.get('/', (req,res)=>{
     res.send('Hellow WOrlw!')
 })
 
+const MONGO_URI = process.env.MONGO_URI;
+if (!MONGO_URI) {
+  console.error("❌ MONGO_URI is not set in .env file!");
+  process.exit(1);
+}
 
+mongoose
+  .connect(MONGO_URI, {
+  })
+  .then(() => console.log("✅ MongoDB connected"))
+  .catch((err) => console.error("❌ MongoDB Connection Error:", err));
 
-mongoose.connect(process.env.MONGO_URI, {})
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.log(err));
-
-
-  console.log("MONGO_URI:", process.env.MONGO_URI);
-
-app.listen(4000, ()=>{
+app.listen(port, ()=>{
     console.log('Server Running On Port 4000');
 })
