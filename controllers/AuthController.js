@@ -61,7 +61,7 @@ module.exports.loginUser = async function (req, res) {
         res.cookie("token", token, {
           httpOnly: true,
           secure: true,
-          sameSite: "Lax"
+          sameSite: "None"// Necessary for cross origin request
         });
         
         res.send("You can login");
