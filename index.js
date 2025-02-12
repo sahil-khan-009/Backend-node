@@ -19,8 +19,8 @@ const port = process.env.PORT || 4000;
 
 app.use(
   cors({
-    origin: '*', // Allow all origins (for debugging)
-    credentials: true,
+    origin: ['http://localhost:5173', 'https://backend-node-5tca.onrender.com','http://localhost:5173'], // Specify allowed origins
+    credentials: true, // Required for cookies, sessions, or authentication
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   })
