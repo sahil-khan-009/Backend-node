@@ -66,7 +66,7 @@ module.exports.loginUser = async function (req, res) {
           domain:''
         });
         
-        res.send("You can login",{token});
+        res.send("You can login");
       } else {
         return res.send("email or password incorrect");
       }
