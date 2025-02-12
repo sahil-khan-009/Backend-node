@@ -11,19 +11,21 @@ const adminRoutes = require('./routes/AdminRoutes');
 const registerRoute = require('./routes/RegistrationRoutes');
 const Doctors = require('./routes/DoctorRoutes')
 const bodyParser = require("body-parser");
-const port = 4000 || process.env.PORT;
+const port = process.env.PORT || 4000;
+
 
 // const flash = require("connect-flash");
 
 
 app.use(
   cors({
-    origin: ['http://localhost:5173', 'https://backend-node-5tca.onrender.com',"http://localhost:5173"  ], // Allow frontend & backend
-    credentials: true, // Allow cookies & sessions
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow specific HTTP methods
-    allowedHeaders: ['Content-Type', 'Authorization'], // Allow necessary headers
+    origin: '*', // Allow all origins (for debugging)
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
+
 
 
 app.use(express.json());
