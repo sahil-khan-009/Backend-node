@@ -59,12 +59,12 @@ module.exports.loginUser = async function (req, res) {
         let token = genratetoken(user);
         // res.json({  });
         // res.cookie("token", token);
-        // res.cookie("token", token, {
-        //   httpOnly: true,
-        //   secure: true,
-        //   sameSite: "None",
-        //   domain:''
-        // });
+        res.cookie("token", token, {
+          httpOnly: true,
+          secure: true,
+          sameSite: "None",
+          domain:''
+        });
         
         res.send("You can login",{token});
       } else {
