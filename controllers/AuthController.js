@@ -61,7 +61,8 @@ module.exports.loginUser = async function (req, res) {
         res.cookie("token", token, {
           httpOnly: true,
           secure: true,
-          sameSite: "lax"
+          sameSite: "None",
+          domain:'https://backend-node-5tca.onrender.com'
         });
         
         res.send("You can login");
