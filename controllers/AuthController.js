@@ -57,15 +57,16 @@ module.exports.loginUser = async function (req, res) {
         console.log('result================',result);
       if (result) {
         let token = genratetoken(user);
+        // res.json({  });
         // res.cookie("token", token);
-        res.cookie("token", token, {
-          httpOnly: true,
-          secure: true,
-          sameSite: "None",
-          domain:'https://backend-node-5tca.onrender.com'
-        });
+        // res.cookie("token", token, {
+        //   httpOnly: true,
+        //   secure: true,
+        //   sameSite: "None",
+        //   domain:''
+        // });
         
-        res.send("You can login");
+        res.send("You can login",{token});
       } else {
         return res.send("email or password incorrect");
       }
