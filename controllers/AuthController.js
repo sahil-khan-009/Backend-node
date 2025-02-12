@@ -41,10 +41,11 @@ module.exports.registerUser = async function (req, res) {
 };
 
 // Login Module
+
 module.exports.loginUser = async function (req, res) {
     let { userEmail, userPassword } = req.body;
     console.log("This is JWT key ------",process.env.JWT_KEY)
-    console.log("response.headers--------------------",response.headers)
+  
   
     let user = await userModel.findOne({ userEmail});
     if (!user) return res.send("user not found");
@@ -60,7 +61,7 @@ module.exports.loginUser = async function (req, res) {
         res.cookie("token", token, {
           httpOnly: true,
           secure: true,
-          sameSite: "None"
+          sameSite: "lax"
         });
         
         res.send("You can login");

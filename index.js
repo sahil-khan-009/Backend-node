@@ -16,29 +16,32 @@ const port = 4000 || process.env.PORT;
 // const flash = require("connect-flash");
 
 
+app.use(
+  cors({
+    origin: ['http://localhost:5173', 'https://backend-node-5tca.onrender.com'], // Allow frontend & backend
+    credentials: true, // Allow cookies & sessions
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow specific HTTP methods
+    allowedHeaders: ['Content-Type', 'Authorization'], // Allow necessary headers
+  })
+);
+
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(bodyParser.json());
 
 app.use(session({
-  secret: process.env.JWT_KEY,// Use a strong secret in production
+  secret: process.env.JWT_KEY,
   resave: false,
   saveUninitialized: true,
-  cookie:{
-    secure: false,
-    httpOnly: true,
-    maxAge: 1000 * 60 * 60 * 24, // Equals 24 hours
-    sameSite: 'lax'
-  }
+  cookie: {
+
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24, // 24 hours
+      sameSite:  'Lax', // Adjust sameSite
+  },
 }));
 
-
-app.use(
-  cors({
-    origin: ['http://localhost:5173', 'http://localhost:5174'], // Allow both ports
-    credentials: true, // Allow cookies & sessions
-  })
-);
 
 
 // app.use(
