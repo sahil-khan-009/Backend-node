@@ -21,8 +21,8 @@ const userModel = require("../models/Users");
 //         next(); // Proceed to the next middleware
 //     });
 // }
-const jwt = require("jsonwebtoken");
-const userModel = require("../models/userModel");
+// const jwt = require("jsonwebtoken");
+// const userModel = require("../models/userModel");
 
 module.exports = async function (req, res, next) {
   try {
