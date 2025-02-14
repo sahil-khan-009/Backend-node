@@ -45,7 +45,7 @@ router.post("/appointments", isLoggedIn, async (req, res) => {
         departmentId: new mongoose.Types.ObjectId(departmentId),
       })
         .populate("userId", "userName userEmail role")
-        .populate("departmentId", "department doctors.name doctors.email doctors.phone doctors.availability");
+        .populate("departmentId", "department doctors._id doctors.name doctors.email doctors.phone doctors.availability");
   
       res.status(200).json(appointments);
     } catch (err) {
