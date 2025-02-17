@@ -131,9 +131,12 @@ router.post("/appointments", isLoggedIn, async (req, res) => {
           }
         }
       ]);
+
+      console.log("--------appointments---------",appointments);
   
       if (appointments.length === 0) {
         return res.status(404).json({ message: "No appointments found" });
+        console.log("--------appointments---------",appointments);
       }
   
       res.status(200).json(appointments);
