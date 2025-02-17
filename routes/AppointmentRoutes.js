@@ -31,21 +31,47 @@ router.post("/appointments", isLoggedIn, async (req, res) => {
 
 //get user appointment status
 // router.get("/appointments", isLoggedIn, async (req, res) => {
-  router.get("/appointments/:departmentId", isLoggedIn, async (req, res) => {
-    try {
-      const { departmentId } = req.params;
-      console.log("Department ID:", departmentId);
+  // router.get("/appointments/:departmentId", isLoggedIn, async (req, res) => {
+  //   try {
+  //     const { departmentId } = req.params;
+  //     console.log("Department ID:", departmentId);
   
-      if (!mongoose.Types.ObjectId.isValid(departmentId)) {
-        return res.status(400).json({ error: "Invalid Department ID format" });
-      }
+  //     if (!mongoose.Types.ObjectId.isValid(departmentId)) {
+  //       return res.status(400).json({ error: "Invalid Department ID format" });
+  //     }
+  
+  //     const appointments = await Appointment.find({
+  //       userId: req.user._id,
+  //       departmentId: new mongoose.Types.ObjectId(departmentId),
+  //     })
+  //       .populate("userId", "userName userEmail role")
+  //       .populate("departmentId", "department doctors._id doctors.name doctors.email doctors.phone doctors.availability");
+  
+  //     res.status(200).json(appointments);
+  //   } catch (err) {
+  //     console.error("Error fetching appointments:", err.message);
+  //     res.status(500).json({ error: err.message });
+  //   }
+  // });
+
+
+
+  router.get("/appointments", isLoggedIn, async (req, res) => {
+    try {
+      // const { departmentId } = req.params;
+      // console.log("Department ID:", departmentId);
+
+  
+      // if (!mongoose.Types.ObjectId.isValid(departmentId)) {
+      //   return res.status(400).json({ error: "Invalid Department ID format" });
+      // }
   
       const appointments = await Appointment.find({
-        userId: req.user._id,
-        departmentId: new mongoose.Types.ObjectId(departmentId),
+        userId: req.user._id
+        // departmentId: new mongoose.Types.ObjectId(departmentId),
       })
         .populate("userId", "userName userEmail role")
-        .populate("departmentId", "department doctors._id doctors.name doctors.email doctors.phone doctors.availability");
+        // .populate("departmentId", "department doctors._id doctors.name doctors.email doctors.phone doctors.availability");
   
       res.status(200).json(appointments);
     } catch (err) {
@@ -53,6 +79,7 @@ router.post("/appointments", isLoggedIn, async (req, res) => {
       res.status(500).json({ error: err.message });
     }
   });
+   
    
 
 
