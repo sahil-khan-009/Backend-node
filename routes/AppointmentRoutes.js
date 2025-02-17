@@ -55,22 +55,18 @@ router.post("/appointments", isLoggedIn, async (req, res) => {
   // });
 
 
-  router.get("/appointments/:departmentId/:doctorId", isLoggedIn, async (req, res) => {
+  router.get("/appointments", async (req, res) => {
     try {
-      const { departmentId, doctorId } = req.params;
-  
-      // Validate ObjectId format
-      if (!mongoose.Types.ObjectId.isValid(departmentId) || !mongoose.Types.ObjectId.isValid(doctorId)) {
-        return res.status(400).json({ error: "Invalid Department ID or Doctor ID format" });
-      }
+      // Hardcoded departmentId and doctorId for testing
+      const departmentId = new mongoose.Types.ObjectId("67a21c30bc81bdef7eb84e63"); // Replace with actual departmentId
+      const doctorId = new mongoose.Types.ObjectId("67a21c30bc81bdef7eb84e65"); // Replace with actual doctorId
   
       const appointments = await Appointment.aggregate([
-        // Step 1: Match appointments with departmentId and doctorId
+        // Step 1: Match appointments with hardcoded departmentId and doctorId
         {
           $match: {
-            userId: req.user._id,
-            departmentId: new mongoose.Types.ObjectId(departmentId),
-            doctorId: new mongoose.Types.ObjectId(doctorId)
+            departmentId: departmentId,
+            doctorId: doctorId
           }
         },
         // Step 2: Lookup department details (including nested doctors array)
@@ -95,7 +91,7 @@ router.post("/appointments", isLoggedIn, async (req, res) => {
                   $filter: {
                     input: "$deptDetails.doctors",
                     as: "doc",
-                    cond: { $eq: ["$$doc._id", new mongoose.Types.ObjectId(doctorId)] }
+                    cond: { $eq: ["$$doc._id", doctorId] }
                   }
                 },
                 0
