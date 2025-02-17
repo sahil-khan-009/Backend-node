@@ -57,19 +57,19 @@ router.post("/appointments", isLoggedIn, async (req, res) => {
 
   router.get("/appointments", async (req, res) => {
     try {
-      // Hardcoded departmentId and doctorId for testing
-      const departmentId = new mongoose.Types.ObjectId("67a21c67bc81bdef7eb84e68"); // Replace with actual departmentId
-      const doctorId = new mongoose.Types.ObjectId("67a21c67bc81bdef7eb84e69"); // Replace with actual doctorId
-  
       const appointments = await Appointment.aggregate([
-        // Step 1: Match appointments with hardcoded departmentId and doctorId
+        // Step 1: Lookup Doctor details (including department)
         {
-          $match: {
-            departmentId: departmentId,
-            doctorId: doctorId
+          $lookup: {
+            from: "doctors",
+            localField: "doctorId",
+            foreignField: "_id",
+            as: "doctorDetails"
           }
         },
-        // Step 2: Lookup department details (including nested doctors array)
+        { $unwind: "$doctorDetails" },
+  
+        // Step 2: Lookup Department details
         {
           $lookup: {
             from: "doctors",
@@ -78,28 +78,9 @@ router.post("/appointments", isLoggedIn, async (req, res) => {
             as: "deptDetails"
           }
         },
-        // Step 3: Unwind deptDetails array
-        {
-          $unwind: "$deptDetails"
-        },
-        // Step 4: Filter doctors array to get only the matching doctorId
-        {
-          $addFields: {
-            doctorDetail: {
-              $arrayElemAt: [
-                {
-                  $filter: {
-                    input: "$deptDetails.doctors",
-                    as: "doc",
-                    cond: { $eq: ["$$doc._id", doctorId] }
-                  }
-                },
-                0
-              ]
-            }
-          }
-        },
-        // Step 5: Lookup user details
+        { $unwind: "$deptDetails" },
+  
+        // Step 3: Lookup User details
         {
           $lookup: {
             from: "users",
@@ -108,29 +89,51 @@ router.post("/appointments", isLoggedIn, async (req, res) => {
             as: "userDetails"
           }
         },
-        // Step 6: Project required fields
+        { $unwind: "$userDetails" },
+  
+        // Step 4: Group by Department (To Show All Appointments per Department)
+        {
+          $group: {
+            _id: "$departmentId",
+            departmentName: { $first: "$deptDetails.department" },
+            appointments: {
+              $push: {
+                appointmentId: "$_id",
+                appointmentDate: "$appointmentDate",
+                description: "$description",
+                appointmentStatus: "$appointmentStatus",
+                doctor: {
+                  name: "$doctorDetails.name",
+                  email: "$doctorDetails.email",
+                  phone: "$doctorDetails.phone",
+                  availability: "$doctorDetails.availability"
+                },
+                patient: {
+                  name: "$patientName",
+                  email: "$patientEmail"
+                },
+                user: {
+                  name: "$userDetails.userName",
+                  email: "$userDetails.userEmail",
+                  role: "$userDetails.role"
+                }
+              }
+            }
+          }
+        },
+  
+        // Step 5: Restructure Response
         {
           $project: {
-            _id: 1,
-            patientName: 1,
-            patientemail: 1,
-            appointmentDate: 1,
-            description: 1,
-            appointmentStatus: 1,
-            department: "$deptDetails.department",
-            doctorDetail: {
-              name: 1,
-              email: 1,
-              phone: 1,
-              availability: 1
-            },
-            userDetails: { userName: 1, userEmail: 1, role: 1 }
+            _id: 0,
+            department: "$departmentName",
+            appointments: 1
           }
         }
       ]);
   
       if (appointments.length === 0) {
-        return res.status(404).json({ message: "No appointments found for the given department and doctor" });
+        return res.status(404).json({ message: "No appointments found" });
       }
   
       res.status(200).json(appointments);
@@ -139,6 +142,97 @@ router.post("/appointments", isLoggedIn, async (req, res) => {
       res.status(500).json({ error: err.message });
     }
   });
+
+
+
+
+
+
+
+  // router.get("/appointments", async (req, res) => {
+  //   try {
+  //     // Hardcoded departmentId and doctorId for testing
+  //     const departmentId = new mongoose.Types.ObjectId("67a21c67bc81bdef7eb84e68"); // Replace with actual departmentId
+  //     const doctorId = new mongoose.Types.ObjectId("67a21c67bc81bdef7eb84e69"); // Replace with actual doctorId
+  
+  //     const appointments = await Appointment.aggregate([
+  //       // Step 1: Match appointments with hardcoded departmentId and doctorId
+  //       {
+  //         $match: {
+  //           departmentId: departmentId,
+  //           doctorId: doctorId
+  //         }
+  //       },
+  //       // Step 2: Lookup department details (including nested doctors array)
+  //       {
+  //         $lookup: {
+  //           from: "doctors",
+  //           localField: "departmentId",
+  //           foreignField: "_id",
+  //           as: "deptDetails"
+  //         }
+  //       },
+  //       // Step 3: Unwind deptDetails array
+  //       {
+  //         $unwind: "$deptDetails"
+  //       },
+  //       // Step 4: Filter doctors array to get only the matching doctorId
+  //       {
+  //         $addFields: {
+  //           doctorDetail: {
+  //             $arrayElemAt: [
+  //               {
+  //                 $filter: {
+  //                   input: "$deptDetails.doctors",
+  //                   as: "doc",
+  //                   cond: { $eq: ["$$doc._id", doctorId] }
+  //                 }
+  //               },
+  //               0
+  //             ]
+  //           }
+  //         }
+  //       },
+  //       // Step 5: Lookup user details
+  //       {
+  //         $lookup: {
+  //           from: "users",
+  //           localField: "userId",
+  //           foreignField: "_id",
+  //           as: "userDetails"
+  //         }
+  //       },
+  //       // Step 6: Project required fields
+  //       {
+  //         $project: {
+  //           _id: 1,
+  //           patientName: 1,
+  //           patientemail: 1,
+  //           appointmentDate: 1,
+  //           description: 1,
+  //           appointmentStatus: 1,
+  //           department: "$deptDetails.department",
+  //           doctorDetail: {
+  //             name: 1,
+  //             email: 1,
+  //             phone: 1,
+  //             availability: 1
+  //           },
+  //           userDetails: { userName: 1, userEmail: 1, role: 1 }
+  //         }
+  //       }
+  //     ]);
+  
+  //     if (appointments.length === 0) {
+  //       return res.status(404).json({ message: "No appointments found for the given department and doctor" });
+  //     }
+  
+  //     res.status(200).json(appointments);
+  //   } catch (err) {
+  //     console.error("Error fetching appointments:", err.message);
+  //     res.status(500).json({ error: err.message });
+  //   }
+  // });
   // clg = console.log;  
    
    
