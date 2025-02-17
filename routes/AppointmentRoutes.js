@@ -149,9 +149,6 @@ router.post("/appointments", isLoggedIn, async (req, res) => {
 
 
 
-
-
-
   // router.get("/appointments", async (req, res) => {
   //   try {
   //     // Hardcoded departmentId and doctorId for testing
