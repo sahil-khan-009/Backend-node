@@ -58,8 +58,8 @@ router.post("/appointments", isLoggedIn, async (req, res) => {
   router.get("/appointments", async (req, res) => {
     try {
       // Hardcoded departmentId and doctorId for testing
-      const departmentId = new mongoose.Types.ObjectId("67a21c30bc81bdef7eb84e63"); // Replace with actual departmentId
-      const doctorId = new mongoose.Types.ObjectId("67a21c30bc81bdef7eb84e65"); // Replace with actual doctorId
+      const departmentId = new mongoose.Types.ObjectId("67a21c67bc81bdef7eb84e68"); // Replace with actual departmentId
+      const doctorId = new mongoose.Types.ObjectId("67a21c67bc81bdef7eb84e69"); // Replace with actual doctorId
   
       const appointments = await Appointment.aggregate([
         // Step 1: Match appointments with hardcoded departmentId and doctorId
