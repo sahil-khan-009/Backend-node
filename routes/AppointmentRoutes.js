@@ -62,7 +62,7 @@ router.post("/appointments", isLoggedIn, async (req, res) => {
         // Lookup for department details
         {
           $lookup: {
-            from: "doctors", // Collection name
+            from: "doctors",
             localField: "departmentId",
             foreignField: "_id",
             as: "departmentDetails"
@@ -72,12 +72,22 @@ router.post("/appointments", isLoggedIn, async (req, res) => {
           $unwind: { path: "$departmentDetails", preserveNullAndEmptyArrays: true } 
         },
   
-        // Lookup for doctor details
+        // Lookup for doctor details inside the array
         {
           $lookup: {
             from: "doctors",
-            localField: "doctorId",
-            foreignField: "_id",
+            let: { doctorId: "$doctorId" }, // Passing doctorId
+            pipeline: [
+              { $unwind: "$doctors" }, // Unwind the doctors array
+              { $match: { $expr: { $eq: ["$doctors._id", "$$doctorId"] } } }, // Match doctor inside the array
+              { 
+                $project: { // Select only necessary fields
+                  name: "$doctors.name",
+                  email: "$doctors.email",
+                  phone: "$doctors.phone"
+                }
+              }
+            ],
             as: "doctorDetails"
           }
         },
@@ -85,7 +95,7 @@ router.post("/appointments", isLoggedIn, async (req, res) => {
           $unwind: { path: "$doctorDetails", preserveNullAndEmptyArrays: true } 
         },
   
-        // Final projection to return structured data
+        // Final projection
         {
           $project: {
             _id: 1,
@@ -95,11 +105,7 @@ router.post("/appointments", isLoggedIn, async (req, res) => {
             description: 1,
             appointmentStatus: 1,
             department: "$departmentDetails.department",
-            doctor: {
-              name: "$doctorDetails.name",
-              email: "$doctorDetails.email",
-              phone: "$doctorDetails.phone",
-            }
+            doctor: "$doctorDetails"
           }
         }
       ]);
@@ -110,6 +116,7 @@ router.post("/appointments", isLoggedIn, async (req, res) => {
       res.status(500).json({ error: err.message });
     }
   });
+  
   
 
 
