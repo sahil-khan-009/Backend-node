@@ -128,30 +128,34 @@ router.put("/updateAppointment/:id", async (req, res) => {
 router.delete("/deleteAppointment/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    console.log("that is the id of Delete Route--------", id);
+    console.log("ID received in delete route:", id);
+    console.log("req.user._id----------------------", req.user._id);
 
-    // Check if the appointment exists
+    // Check if appointment exists and mark it as deleted
     const deleteAppointment = await Appointment.findByIdAndUpdate(
-    id,
+      id,
       {
-         isDeleted: true,
-         deletedAt: new Date(),
-         deletedBy: req.user._id //Storing the Id who deleted the appointment
-        },  { new: true }
+        $set: {
+          isDeleted: true,
+          deletedAt: new Date(),
+          deletedBy: req.user ? req.user._id : null, // Ensure req.user exists
+        }
+      },
+      { new: true } // Returns the updated document
     );
 
     if (!deleteAppointment) {
       return res.status(404).json({ error: "Appointment not found" });
     }
 
-    console.log("Appointment deleted successfully");
-    return res
-      .status(200)
-      .json({ message: "Appointment deleted successfully" });
+    console.log("Appointment deleted successfully:", deleteAppointment);
+    return res.status(200).json({ message: "Appointment deleted successfully", data: deleteAppointment });
+
   } catch (error) {
-    console.error("Error deleting appointment:", error.message);
+    console.error("Error deleting appointment:", error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
 
 module.exports = router;
