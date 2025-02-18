@@ -129,7 +129,7 @@ router.delete("/deleteAppointment/:id", async (req, res) => {
   try {
     const { id } = req.params;
     console.log("ID received in delete route:", id);
-    console.log("req.user._id----------------------", req.user._id);
+    console.log("req.user._id----------------------", req.user);
 
     // Check if appointment exists and mark it as deleted
     const deleteAppointment = await Appointment.findByIdAndUpdate(
