@@ -84,7 +84,8 @@ router.post("/appointments", isLoggedIn, async (req, res) => {
                 $project: { // Select only necessary fields
                   name: "$doctors.name",
                   email: "$doctors.email",
-                  phone: "$doctors.phone"
+                  phone: "$doctors.phone",
+                  availability:"$doctors.availability"
                 }
               }
             ],
