@@ -1,8 +1,6 @@
 const mongoose = require("mongoose");
 
 const AppointmentSchema = new mongoose.Schema({
-
- 
   patientName: {
     type: String,
   },
@@ -40,7 +38,25 @@ const AppointmentSchema = new mongoose.Schema({
     ref: "Doctor", // Reference to the Doctor model
     required: true,
   },
+  
+isDeleted: {
+  type: Boolean,
+  default: false, // Not deleted by default
+},
+
+deletedAt: {
+  type: Date, // Stores the timestamp of deletion
+  default: null,
+},
+
+deletedBy: {
+  type: mongoose.Schema.Types.ObjectId, // Tracks who deleted it
+  ref: "User",
+  default: null,
+},
+
 });
+
 
 const Appointment = mongoose.model("Appointment", AppointmentSchema);
 
