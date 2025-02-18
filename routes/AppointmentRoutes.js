@@ -55,10 +55,80 @@ router.post("/appointments", isLoggedIn, async (req, res) => {
   // });
 
 
-  router.get("/appointments", async (req, res) => {
 
-    const appointment = await Appointment.find();
-    console.log('rew apppoinmetns---------------------',appointment);
+  router.get("/appointments", async (req, res) => {
+    try {
+      const appointments = await Appointment.aggregate([
+        {
+          $lookup: {
+            from: "doctors",
+            localField: "departmentId",
+            foreignField: "_id", // Corrected foreignField
+            as: "departmentDetails"
+          }
+        },
+        { $unwind: "$departmentDetails" },
+  
+        {
+          $lookup: {
+            from: "users",
+            localField: "userId",
+            foreignField: "_id",
+            as: "userDetails"
+          }
+        },
+        { $unwind: "$userDetails" },
+  
+        {
+          $lookup: {
+            from: "doctors", // Make sure this collection exists
+            localField: "doctorId",
+            foreignField: "_id",
+            as: "doctorDetails"
+          }
+        },
+        { $unwind: "$doctorDetails" },
+  
+        {
+          $project: {
+            _id: 1,
+            appointmentDate: 1,
+            description: 1,
+            appointmentStatus: 1,
+           department: "$deptDetails.department",
+            user: {
+              name: "$userDetails.userName",
+              email: "$userDetails.userEmail"
+            },
+            
+            department: {
+              name: "$doctorDetails.name",
+              email: "$doctorDetails.email",
+              phone: "$doctorDetails.phone"
+            },
+          }
+        }
+      ]);
+  
+      console.log("Appointments:", appointments);
+  
+      if (appointments.length === 0) {
+        return res.status(404).json({ message: "No appointments found" });
+      }
+  
+      res.status(200).json(appointments);
+    } catch (err) {
+      console.error("Error fetching appointments:", err.message);
+      res.status(500).json({ error: err.message });
+    }
+  });
+  
+
+
+  // router.get("/appointments", async (req, res) => {
+
+    // const appointment = await Appointment.find();
+    // console.log('rew apppoinmetns---------------------',appointment);
     // try {
     //   const appointments = await Appointment.aggregate([
     //     // Step 1: Lookup Doctor details (including department)
@@ -147,7 +217,7 @@ router.post("/appointments", isLoggedIn, async (req, res) => {
     //   console.error("Error fetching appointments:", err.message);
     //   res.status(500).json({ error: err.message });
     // }
-  });
+  // });
 
 
 
