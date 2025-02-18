@@ -57,7 +57,7 @@ router.post("/appointments", isLoggedIn, async (req, res) => {
 
   router.get("/appointments", async (req, res) => {
 
-    const appoinmetns = await Appointment.find();
+    const appointment = await Appointment.find();
     console.log('rew apppoinmetns---------------------',appointment);
     // try {
     //   const appointments = await Appointment.aggregate([
