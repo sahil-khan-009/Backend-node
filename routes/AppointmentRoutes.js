@@ -56,94 +56,97 @@ router.post("/appointments", isLoggedIn, async (req, res) => {
 
 
   router.get("/appointments", async (req, res) => {
-    try {
-      const appointments = await Appointment.aggregate([
-        // Step 1: Lookup Doctor details (including department)
-        {
-          $lookup: {
-            from: "doctors",
-            localField: "doctorId",
-            foreignField: "_id",
-            as: "doctorDetails"
-          }
-        },
-        { $unwind: "$doctorDetails" },
-  
-        // Step 2: Lookup Department details
-        {
-          $lookup: {
-            from: "doctors",
-            localField: "departmentId",
-            foreignField: "_id",
-            as: "deptDetails"
-          }
-        },
-        { $unwind: "$deptDetails" },
-  
-        // Step 3: Lookup User details
-        {
-          $lookup: {
-            from: "users",
-            localField: "userId",
-            foreignField: "_id",
-            as: "userDetails"
-          }
-        },
-        { $unwind: "$userDetails" },
-  
-        // Step 4: Group by Department (To Show All Appointments per Department)
-        {
-          $group: {
-            _id: "$departmentId",
-            departmentName: { $first: "$deptDetails.department" },
-            appointments: {
-              $push: {
-                appointmentId: "$_id",
-                appointmentDate: "$appointmentDate",
-                description: "$description",
-                appointmentStatus: "$appointmentStatus",
-                doctor: {
-                  name: "$doctorDetails.name",
-                  email: "$doctorDetails.email",
-                  phone: "$doctorDetails.phone",
-                  availability: "$doctorDetails.availability"
-                },
-                patient: {
-                  name: "$patientName",
-                  email: "$patientEmail"
-                },
-                user: {
-                  name: "$userDetails.userName",
-                  email: "$userDetails.userEmail",
-                  role: "$userDetails.role"
-                }
-              }
-            }
-          }
-        },
-  
-        // Step 5: Restructure Response
-        {
-          $project: {
-            _id: 0,
-            department: "$departmentName",
-            appointments: 1
-          }
-        }
-      ]);
 
-      console.log("--------appointments---------",appointments);
+    const appoinmetns = await Appointment.find();
+    console.log('rew apppoinmetns---------------------',appointment);
+    // try {
+    //   const appointments = await Appointment.aggregate([
+    //     // Step 1: Lookup Doctor details (including department)
+    //     // {
+    //     //   $lookup: {
+    //     //     from: "doctors",
+    //     //     localField: "doctorId",
+    //     //     foreignField: "_id",
+    //     //     as: "doctorDetails"
+    //     //   }
+    //     // },
+    //     // { $unwind: "$doctorDetails" },
   
-      if (appointments.length === 0) {
-        return res.status(404).json({ message: "No appointments found" });
-        console.log("--------appointments---------",appointments);
-      }
+    //     // Step 2: Lookup Department details
+    //     {
+    //       $lookup: {
+    //         from: "doctors",
+    //         localField: "departmentId",
+    //         foreignField: "_id",
+    //         as: "deptDetails"
+    //       }
+    //     },
+    //     { $unwind: "$deptDetails" },
   
-      res.status(200).json(appointments);
-    } catch (err) {
-      console.error("Error fetching appointments:", err.message);
-      res.status(500).json({ error: err.message });
-    }
+    //     // Step 3: Lookup User details
+    //     {
+    //       $lookup: {
+    //         from: "users",
+    //         localField: "userId",
+    //         foreignField: "_id",
+    //         as: "userDetails"
+    //       }
+    //     },
+    //     { $unwind: "$userDetails" },
+  
+    //     // Step 4: Group by Department (To Show All Appointments per Department)
+    //     {
+    //       $group: {
+    //         _id: "$departmentId",
+    //         departmentName: { $first: "$deptDetails.department" },
+    //         appointments: {
+    //           $push: {
+    //             appointmentId: "$_id",
+    //             appointmentDate: "$appointmentDate",
+    //             description: "$description",
+    //             appointmentStatus: "$appointmentStatus",
+    //             // doctor: {
+    //             //   name: "$doctorDetails.name",
+    //             //   email: "$doctorDetails.email",
+    //             //   phone: "$doctorDetails.phone",
+    //             //   availability: "$doctorDetails.availability"
+    //             // },
+    //             patient: {
+    //               name: "$patientName",
+    //               email: "$patientEmail"
+    //             },
+    //             user: {
+    //               name: "$userDetails.userName",
+    //               email: "$userDetails.userEmail",
+    //               role: "$userDetails.role"
+    //             }
+    //           }
+    //         }
+    //       }
+    //     },
+  
+    //     // Step 5: Restructure Response
+    //     {
+    //       $project: {
+    //         _id: 0,
+    //         department: "$departmentName",
+    //         appointments: 1
+    //       }
+    //     }
+    //   ]);
+
+    //   console.log("--------appointments---------",appointments);
+  
+    //   if (appointments.length === 0) {
+    //     return res.status(404).json({ message: "No appointments found" });
+    //     console.log("--------appointments---------",appointments);
+    //   }
+  
+    //   res.status(200).json(appointments);
+    // } catch (err) {
+    //   console.error("Error fetching appointments:", err.message);
+    //   res.status(500).json({ error: err.message });
+    // }
   });
 
 
