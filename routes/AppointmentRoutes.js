@@ -59,62 +59,50 @@ router.post("/appointments", isLoggedIn, async (req, res) => {
   router.get("/appointments", async (req, res) => {
     try {
       const appointments = await Appointment.aggregate([
+        // Lookup for department details
         {
           $lookup: {
-            from: "doctors",
+            from: "doctors", // Collection name
             localField: "departmentId",
-            foreignField: "_id", // Corrected foreignField
+            foreignField: "_id",
             as: "departmentDetails"
           }
         },
-        { $unwind: "$departmentDetails" },
-  
-        {
-          $lookup: {
-            from: "users",
-            localField: "userId",
-            foreignField: "_id",
-            as: "userDetails"
-          }
+        { 
+          $unwind: { path: "$departmentDetails", preserveNullAndEmptyArrays: true } 
         },
-        { $unwind: "$userDetails" },
   
+        // Lookup for doctor details
         {
           $lookup: {
-            from: "doctors", // Make sure this collection exists
+            from: "doctors",
             localField: "doctorId",
             foreignField: "_id",
             as: "doctorDetails"
           }
         },
-        { $unwind: "$doctorDetails" },
+        { 
+          $unwind: { path: "$doctorDetails", preserveNullAndEmptyArrays: true } 
+        },
   
+        // Final projection to return structured data
         {
           $project: {
             _id: 1,
+            patientName: 1,
+            patientEmail: 1,
             appointmentDate: 1,
             description: 1,
             appointmentStatus: 1,
-           department: "$deptDetails.department",
-            user: {
-              name: "$userDetails.userName",
-              email: "$userDetails.userEmail"
-            },
-            
-            department: {
+            department: "$departmentDetails.department",
+            doctor: {
               name: "$doctorDetails.name",
               email: "$doctorDetails.email",
-              phone: "$doctorDetails.phone"
-            },
+              phone: "$doctorDetails.phone",
+            }
           }
         }
       ]);
-  
-      console.log("Appointments:", appointments);
-  
-      if (appointments.length === 0) {
-        return res.status(404).json({ message: "No appointments found" });
-      }
   
       res.status(200).json(appointments);
     } catch (err) {
