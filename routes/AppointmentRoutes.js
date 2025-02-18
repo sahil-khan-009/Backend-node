@@ -101,7 +101,7 @@ router.post("/appointments", isLoggedIn, async (req, res) => {
           $project: {
             _id: 1,
             patientName: 1,
-            patientEmail: 1,
+            patientemail: 1,
             appointmentDate: 1,
             description: 1,
             appointmentStatus: 1,
