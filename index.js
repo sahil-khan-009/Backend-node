@@ -65,13 +65,8 @@ app.use("/api/doctor",Doctors);
 
 
 
-
-
-
-
-
 app.get('/', (req,res)=>{
-    res.send('Hellow WOrlw!')
+    res.send('Hellow WORLD')
 })
 
 const MONGO_URI = process.env.MONGO_URI;
