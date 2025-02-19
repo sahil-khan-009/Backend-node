@@ -128,7 +128,7 @@ router.put("/updateAppointment/:id", async (req, res) => {
 router.delete("/deleteAppointment/:id", isLoggedIn ,async (req, res) => {
   try {
     const id = req.params;
-    id.trim();
+   
     console.log("ID received in delete route:", id);
     console.log("req.user._id----------------------", req.user._id);
 
