@@ -29,6 +29,9 @@ router.post("/appointments", isLoggedIn, async (req, res) => {
 router.get("/appointments", async (req, res) => {
   try {
     const appointments = await Appointment.aggregate([
+      {
+        $match: { isDeleted: false }
+      }  ,
       // Lookup for department details
       {
         $lookup: {
