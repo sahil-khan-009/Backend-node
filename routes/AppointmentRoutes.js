@@ -127,10 +127,15 @@ router.put("/updateAppointment/:id", async (req, res) => {
 
 router.delete("/deleteAppointment/:id", isLoggedIn ,async (req, res) => {
   try {
-    const id = req.params;
+    const id = req.params.id;
    
     console.log("ID received in delete route:", id);
     console.log("req.user._id----------------------", req.user._id);
+
+    
+    if (!id) {  //Check if ID is present
+      return res.status(400).json({ error: "Appointment ID is required" });
+  }
 
     // Check if appointment exists and mark it as deleted
     const deleteAppointment = await Appointment.findByIdAndUpdate(
