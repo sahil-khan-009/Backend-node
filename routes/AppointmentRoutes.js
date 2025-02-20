@@ -5,6 +5,8 @@ const router = express.Router();
 const isLoggedIn = require("../middlewares/IsLoggedin");
 const mongoose = require("mongoose");
 
+
+//POST API
 router.post("/appointments", isLoggedIn, async (req, res) => {
   try {
     console.log("req.body================", req.body);
@@ -25,7 +27,7 @@ router.post("/appointments", isLoggedIn, async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
+// GET API
 router.get("/appointments", async (req, res) => {
   try {
     const appointments = await Appointment.aggregate([
@@ -95,9 +97,13 @@ router.get("/appointments", async (req, res) => {
   }
 });
 
+
+
+// UPDATE API
+
 router.put("/updateAppointment/:id", async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id } = req.params.id;
     console.log("It is Post Id=====", id);
     let {
       patientName,
@@ -105,6 +111,9 @@ router.put("/updateAppointment/:id", async (req, res) => {
       appointmentDate,
       description,
       patientemail,
+      departmentId,
+      doctorId
+
     } = req.body;
 
     let update = await Appointment.findByIdAndUpdate(
@@ -115,6 +124,8 @@ router.put("/updateAppointment/:id", async (req, res) => {
         appointmentDate,
         description,
         patientemail,
+        departmentId,
+        doctorId
       },
       { new: true } // return the updatedAppointmentd document
     );
@@ -127,6 +138,10 @@ router.put("/updateAppointment/:id", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+
+// DELETE API
+
 
 router.delete("/deleteAppointment/:id", isLoggedIn ,async (req, res) => {
   try {
