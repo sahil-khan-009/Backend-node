@@ -126,7 +126,7 @@ router.put("/updateAppointment/:id", async (req, res) => {
         description,
         patientemail,
         departmentId,
-        doctorId
+        doctorId,
       },
       { new: true } // return the updatedAppointmentd document
     );
