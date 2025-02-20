@@ -103,6 +103,7 @@ router.get("/appointments", async (req, res) => {
 
 router.put("/updateAppointment/:id", async (req, res) => {
   try {
+    console.log("req.body================", req.body);
     const { id } = req.params.id;
     console.log("It is Post Id=====", id);
     let {
