@@ -39,6 +39,12 @@ const AppointmentSchema = new mongoose.Schema({
     required: true,
   },
   
+  availability:{
+    type: String,
+    ref: "Doctor",
+    required: true,
+  },
+
 isDeleted: {
   type: Boolean,
   default: false, // Not deleted by default
