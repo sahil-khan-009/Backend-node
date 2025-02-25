@@ -113,7 +113,8 @@ router.put("/updateAppointment/:id", async (req, res) => {
       description,
       patientemail,
       departmentId,
-      doctorId
+      doctorId,
+      availability
 
     } = req.body;
 
@@ -127,6 +128,7 @@ router.put("/updateAppointment/:id", async (req, res) => {
         patientemail,
         departmentId,
         doctorId,
+        availability
       },
       { new: true } // return the updatedAppointmentd document
     );
