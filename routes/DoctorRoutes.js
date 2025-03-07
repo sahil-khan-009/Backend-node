@@ -39,9 +39,9 @@ router.post("/Createdoctor", async (req, res) => {
     console.error("Error in creating doctor:", err.message);
 
     // Handle duplicate email error
-    if (err.code === 11000) {
-      return res.status(400).json({ error: "Email already exists." });
-    }
+    // if (err.code === 11000) {
+    //   return res.status(400).json({ error: "Email already exists." });
+    // }
 
     res.status(500).json({ error: err.message });
   }
