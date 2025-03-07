@@ -10,6 +10,7 @@ const appointmentRoutes = require("./routes/AppointmentRoutes");
 const adminRoutes = require('./routes/AdminRoutes');
 const registerRoute = require('./routes/RegistrationRoutes');
 const Doctors = require('./routes/DoctorRoutes')
+const Department = require('./routes/DepartmentRoutes')
 const bodyParser = require("body-parser");
 const port = process.env.PORT || 4000;
 
@@ -62,6 +63,8 @@ app.use("/api", appointmentRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/auth", registerRoute);
 app.use("/api/doctor",Doctors);
+app.use('/api/department',Department);
+
 
 
 
@@ -83,5 +86,5 @@ mongoose
   .catch((err) => console.error("❌ MongoDB Connection Error:", err));
 
 app.listen(port, ()=>{
-    console.log('Server Running On Port 4000');
+    console.log('Server Running On Port 4000',port);
 })

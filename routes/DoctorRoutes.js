@@ -1,30 +1,42 @@
 const express = require("express");
 const router = express.Router();
-
 const Doctor = require("../models/DoctorSchema");
-
+const Department = require('../models/DepartmentSchema')
 // Route to create a doctor
-router.post('/Createdoctor', async (req, res) => {
+router.post("/Createdoctor", async (req, res) => {
   try {
-    const {  department, doctors} = req.body; // Destructure required fields
+    const { name, email, phone, uniqueId, availability, department } = req.body;
     console.log("Incoming Data------doctor:", req.body);
+
+    // Check if department exists
+    const existingDepartment = await Department.findById(department);
+    if (!existingDepartment) {
+      return res.status(400).json({ error: "Invalid department ID" });
+    }
 
     // Create a new doctor instance
     const createdDoctor = new Doctor({
-    
+      name,
+      email,
+      phone,
+      uniqueId,
+      availability,
       department,
-      doctors
     });
- 
+
     // Save the doctor to the database
     const savedDoctor = await createdDoctor.save();
+
+    // Push doctor ID to the department's doctors array
+    existingDepartment.doctors.push(savedDoctor._id);
+    await existingDepartment.save();
 
     res.status(201).json({
       message: "Doctor created successfully",
       doctor: savedDoctor,
     });
   } catch (err) {
-    console.log("Error in creating doctor:", err.message);
+    console.error("Error in creating doctor:", err.message);
 
     // Handle duplicate email error
     if (err.code === 11000) {
@@ -34,7 +46,6 @@ router.post('/Createdoctor', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
 
 router.get("/Department", async (req, res) => {
     try {
