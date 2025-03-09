@@ -8,7 +8,7 @@ const DoctorSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    unique: true,
+    // unique: true,
     required: true,
     lowercase: true,
     trim: true,
@@ -35,6 +35,12 @@ const DoctorSchema = new mongoose.Schema({
       message: "Invalid weekday in availability",
     },
   },
+
+  timings: {
+    start: { type: String, required: true }, // Common start time
+    end: { type: String, required: true },   // Common end time
+  },
+
   department: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Department",

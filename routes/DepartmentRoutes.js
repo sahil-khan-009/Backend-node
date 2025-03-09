@@ -3,7 +3,7 @@ const router = express.Router();
 
 const Department = require("../models/DepartmentSchema");
 
-router.post("/CreateDepartment", async (req, res) => {
+router.post("/Createdepartment", async (req, res) => {
     console.log("Received request body:", req.body);
   
     const { name } = req.body;

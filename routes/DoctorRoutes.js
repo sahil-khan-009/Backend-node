@@ -3,15 +3,30 @@ const router = express.Router();
 const Doctor = require("../models/DoctorSchema");
 const Department = require('../models/DepartmentSchema')
 // Route to create a doctor
+
+
+
 router.post("/Createdoctor", async (req, res) => {
   try {
-    const { name, email, phone, uniqueId, availability, department } = req.body;
+    const { name, email, phone, uniqueId, availability, department ,start,end} = req.body;
+
     console.log("Incoming Data------doctor:", req.body);
+
+    // Validate email is provided
+    if (!email) {
+      return res.status(400).json({ error: "Email is required" });
+    }
 
     // Check if department exists
     const existingDepartment = await Department.findById(department);
     if (!existingDepartment) {
       return res.status(400).json({ error: "Invalid department ID" });
+    }
+
+    // Check if email already exists in doctors collection
+    const emailExists = await Doctor.findOne({ email });
+    if (emailExists) {
+      return res.status(400).json({ error: "Email already exists" });
     }
 
     // Create a new doctor instance
@@ -21,6 +36,7 @@ router.post("/Createdoctor", async (req, res) => {
       phone,
       uniqueId,
       availability,
+      timings: { start, end }, // Store common timing
       department,
     });
 
@@ -39,13 +55,14 @@ router.post("/Createdoctor", async (req, res) => {
     console.error("Error in creating doctor:", err.message);
 
     // Handle duplicate email error
-    // if (err.code === 11000) {
-    //   return res.status(400).json({ error: "Email already exists." });
-    // }
+    if (err.code === 11000) {
+      return res.status(400).json({ error: "Email already exists." });
+    }
 
     res.status(500).json({ error: err.message });
   }
 });
+
 
 router.get("/Department", async (req, res) => {
     try {
