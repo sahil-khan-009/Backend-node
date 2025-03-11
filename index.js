@@ -27,6 +27,12 @@ app.use(
   })
 );
 
+// app.use((req, res, next) => {
+//   if (req.method === "GET" && req.body && Object.keys(req.body).length > 0) {
+//     console.log("Warning: GET request received with a body, ignoring...");
+//   }
+//   next();
+// });
 
 
 app.use(express.json());
