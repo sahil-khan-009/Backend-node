@@ -13,10 +13,10 @@ router.post("/Createdoctor", async (req, res) => {
     console.log("Incoming Data------doctor:", req.body);
 
     // Validate email is provided
-    if (!email) {
-      return res.status(400).json({ error: "Email is required" });
+    if (!name || !email || !phone || !department || !availability) {
+      return res.status(400).json({ error: "All fields are required" });
     }
-
+    
     // Check if department exists
     const existingDepartment = await Department.findById(department);
     if (!existingDepartment) {

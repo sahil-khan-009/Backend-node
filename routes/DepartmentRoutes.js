@@ -15,10 +15,10 @@ router.post("/Createdepartment", async (req, res) => {
 
   try {
     // Check if department already exists
-    //   const existingDepartment = await Department.findOne({ name });
-    //   if (existingDepartment) {
-    //     return res.status(400).json({ message: "Department already exists" });
-    //   }
+      const existingDepartment = await Department.findOne({ name });
+      if (existingDepartment) {
+        return res.status(400).json({ message: "Department already exists" });
+      }
 
     // Create and save department
     const newDepartment = new Department({ name });
