@@ -64,6 +64,21 @@ router.post("/Createdoctor", async (req, res) => {
 });
 
 
+
+
+//<--------------------------------- Get Api of Doctors------------------------>
+router.get('/Alldoctors', async (req, res) => {
+  try {
+    const Alldoctor = await Doctor.find({}, { _id: 0, department: 0 }); // Use `await` and correct projection syntax
+
+    res.status(200).json(Alldoctor); // Use `json()` to send a proper response
+  } catch (err) {
+    console.log("This is a catch error:", err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 router.get("/Department", async (req, res) => {
     try {
       // Fetch only specific fields: name, department, and availability
