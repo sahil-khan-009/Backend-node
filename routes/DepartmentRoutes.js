@@ -39,7 +39,9 @@ router.post("/Createdepartment", async (req, res) => {
 router.get("/Getdepartment", async (req, res) => {
   try {
     // console.log(req.body)
-    const department = await Department.find({});
+    const department = await Department.find({})
+    .populate("doctors", "name")
+    .lean();
     console.log("department==============",department)
     res.status(200).json(department); //always use 200 for GET request
   } catch (err) {

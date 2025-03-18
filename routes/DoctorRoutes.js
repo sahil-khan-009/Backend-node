@@ -79,19 +79,19 @@ router.get('/Alldoctors', async (req, res) => {
 });
 
 
-router.get("/Department", async (req, res) => {
-    try {
-      // Fetch only specific fields: name, department, and availability
-      const DoctorsDepartment = await Doctor.find({}, { "doctors.phone": 0 });
+// router.get("/Department", async (req, res) => {
+//     try {
+//       // Fetch only specific fields: name, department, and availability
+//       const DoctorsDepartment = await Doctor.find({}, { "doctors.phone": 0 });
 
-      console.log("Doctors' Name, Department, and Availability:", DoctorsDepartment);
+//       console.log("Doctors' Name, Department, and Availability:", DoctorsDepartment);
   
-      // Send the filtered data to the frontend
-      res.status(200).json(DoctorsDepartment);
-    } catch (err) {
-      console.error("Error fetching doctors' data:", err.message);
-      res.status(500).json({ error: "Failed to fetch data" });
-    }
-  });
+//       // Send the filtered data to the frontend
+//       res.status(200).json(DoctorsDepartment);
+//     } catch (err) {
+//       console.error("Error fetching doctors' data:", err.message);
+//       res.status(500).json({ error: "Failed to fetch data" });
+//     }
+//   });
   
 module.exports = router;
