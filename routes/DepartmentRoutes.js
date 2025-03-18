@@ -36,6 +36,9 @@ router.post("/Createdepartment", async (req, res) => {
   }
 });
 
+
+//<----------------------- using this api for 2 works -------------------->
+// Showing in add doctors dropdown and using department table to show all department
 router.get("/Getdepartment", async (req, res) => {
   try {
     // console.log(req.body)
