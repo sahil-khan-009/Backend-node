@@ -37,13 +37,13 @@ router.post("/Createdepartment", async (req, res) => {
 });
 
 
-//<----------------------- using this api for 2 works -------------------->
+//<----------------------- using this api for 3 works -------------------->
 // Showing in add doctors dropdown and using department table to show all department
 router.get("/Getdepartment", async (req, res) => {
   try {
     // console.log(req.body)
     const department = await Department.find({})
-    .populate("doctors", "name")
+    .populate("doctors")
     .lean();
     console.log("department==============",department)
     res.status(200).json(department); //always use 200 for GET request
