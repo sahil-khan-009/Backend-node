@@ -31,7 +31,7 @@ const AppointmentSchema = new mongoose.Schema({
 
   departmentId: { 
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Doctor", // Reference to the Doctor model
+    ref: "Department", // Reference to the department model
     required: true,
 
   },
