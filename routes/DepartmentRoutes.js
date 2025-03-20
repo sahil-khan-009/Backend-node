@@ -42,7 +42,7 @@ router.post("/Createdepartment", async (req, res) => {
 router.get("/Getdepartment", async (req, res) => {
   try {
     // console.log(req.body)
-    const department = await Department.find({},{_id:1})
+    const department = await Department.find({},{_id:1, name:1})
     .populate("doctors")
     .lean();
     console.log("department==============",department)
