@@ -8,7 +8,8 @@ const AppointmentSchema = new mongoose.Schema({
   patientemail: {
     type: String, // Email of the person associated with the appointment
     required: true,
-    unique: true
+    // unique: true,
+    lowercase: true
   },
   appointmentDate: {
     type: Date,
