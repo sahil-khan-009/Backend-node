@@ -13,10 +13,10 @@ router.post("/appointments", isLoggedIn, async (req, res) => {
     const doctorId = req.body.doctorId;
     console.log("doctorId----------", doctorId);
     
-    const existingAppointment = await Appointment.findOne({ patientemail: req.body.patientemail });
-    if (existingAppointment) {
-      return res.status(400).json({ message: "Email already exists" });
-    }
+    // const existingAppointment = await Appointment.findOne({ patientemail: req.body.patientemail });
+    // if (existingAppointment) {
+    //   return res.status(400).json({ message: "Email already exists" });
+    // }
     
     const appointment = new Appointment({ ...req.body, userId: req.user._id }); //
 
