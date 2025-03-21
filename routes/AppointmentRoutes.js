@@ -36,52 +36,54 @@ router.post("/appointments", isLoggedIn, async (req, res) => {
 router.get("/appointments", async (req, res) => {
   try {
     const appointments = await Appointment.aggregate([
-        { $sort: { appointmentDate: 1 } },  // ✅ Corrected $sort syntax
-        
-        {
-            $lookup: {
-                from: "doctors", // ✅ Ensure this matches your DB collection name
-                localField: "doctorId",
-                foreignField: "_id",
-                as: "doctorDetails",
-            },
-        },
-        { $unwind: "$doctorDetails" }, // ✅ Convert array to object
+      { $sort: { appointmentDate: 1 } }, // ✅ Corrected $sort syntax
 
-        {
-            $lookup: {
-                from: "departments", // ✅ Ensure this matches your DB collection name
-                localField: "departmentId",
-                foreignField: "_id",
-                as: "departmentDetails",
-            },
-        },
-        { $unwind: "$departmentDetails" },
+      { $match: { isDeleted: false } }, // ✅ Ensure only non-deleted appointments
 
-        {
-            $project: {
-                _id: 1,
-                patientName: 1,
-                patientemail: 1,
-                appointmentDate: 1,
-                appointmentStatus: 1,
-                doctorName: "$doctorDetails.name", // ✅ Fetching doctor's name
-                doctorEmail: "$doctorDetails.email", // ✅ Fetching doctor's email
-                department: "$departmentDetails.name", // ✅ Fetching department name
-            },
+      {
+        $lookup: {
+          from: "doctors", // ✅ Ensure this matches your DB collection name
+          localField: "doctorId",
+          foreignField: "_id",
+          as: "doctorDetails",
         },
+      },
+      { $unwind: "$doctorDetails" }, // ✅ Convert array to object
+
+      {
+        $lookup: {
+          from: "departments", // ✅ Ensure this matches your DB collection name
+          localField: "departmentId",
+          foreignField: "_id",
+          as: "departmentDetails",
+        },
+      },
+      { $unwind: "$departmentDetails" },
+
+      {
+        $project: {
+          _id: 1,
+          patientName: 1,
+          patientemail: 1,
+          appointmentDate: 1,
+          appointmentStatus: 1,
+          doctorName: "$doctorDetails.name", // ✅ Fetching doctor's name
+          doctorEmail: "$doctorDetails.email", // ✅ Fetching doctor's email
+          department: "$departmentDetails.name", // ✅ Fetching department name
+        },
+      },
     ]);
 
     return res.status(200).json(appointments);
-} catch (err) {
+  } catch (err) {
     console.log("this is catch error", err.message);
     return res.status(500).json({
-        Error: "Internal server error",
-        err: err.message,
+      Error: "Internal server error",
+      err: err.message,
     });
-}
-
+  }
 });
+
 
 // UPDATE API
 
