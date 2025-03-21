@@ -36,53 +36,51 @@ router.post("/appointments", isLoggedIn, async (req, res) => {
 router.get("/appointments", async (req, res) => {
   try {
     const appointments = await Appointment.aggregate([
-      {
-        $sort: { appointmentDate: 1  },
+        { $sort: { appointmentDate: 1 } },  // ✅ Corrected $sort syntax
+        
+        {
+            $lookup: {
+                from: "doctors", // ✅ Ensure this matches your DB collection name
+                localField: "doctorId",
+                foreignField: "_id",
+                as: "doctorDetails",
+            },
+        },
+        { $unwind: "$doctorDetails" }, // ✅ Convert array to object
 
-        $lookup: {
-          from: "doctors", // Collection to join (Doctor)
-          localField: "doctorId", // Field in Appointment collection
-          foreignField: "_id", // Field in Doctor collection
-          as: "doctorDetails", // Output field
+        {
+            $lookup: {
+                from: "departments", // ✅ Ensure this matches your DB collection name
+                localField: "departmentId",
+                foreignField: "_id",
+                as: "departmentDetails",
+            },
         },
-      },
-      {
-        $unwind: "$doctorDetails", // Convert array to object
-      },
-      {
-        $lookup: {
-          from: "departments", // Collection to join (Department)
-          localField: "departmentId",
-          foreignField: "_id",
-          as: "departmentDetails",
+        { $unwind: "$departmentDetails" },
+
+        {
+            $project: {
+                _id: 1,
+                patientName: 1,
+                patientemail: 1,
+                appointmentDate: 1,
+                appointmentStatus: 1,
+                doctorName: "$doctorDetails.name", // ✅ Fetching doctor's name
+                doctorEmail: "$doctorDetails.email", // ✅ Fetching doctor's email
+                department: "$departmentDetails.name", // ✅ Fetching department name
+            },
         },
-      },
-      {
-        $unwind: "$departmentDetails",
-      },
-      {
-        $project: {
-          _id: 1, // Keep Appointment ID
-          patientName: 1,
-          patientemail: 1,
-          appointmentDate: 1,
-          appointmentStatus: 1,
-          doctorName: "$doctorDetails.name", // Get doctor name
-          doctorEmail: "$doctorDetails.email", // Get doctor email
-          department: "$departmentDetails.name", // Get department name
-        },
-      },
     ]);
 
-    // console.log(appointments);
-
     return res.status(200).json(appointments);
-  } catch (err) {
-    console.log("this is catch erroor", err.message);
-    return res
-      .status(500)
-      .json({ Errorr: " Internal server error", err: err.message });
-  }
+} catch (err) {
+    console.log("this is catch error", err.message);
+    return res.status(500).json({
+        Error: "Internal server error",
+        err: err.message,
+    });
+}
+
 });
 
 // UPDATE API
