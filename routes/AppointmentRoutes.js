@@ -38,7 +38,7 @@ router.get("/appointments", async (req, res) => {
     const appointments = await Appointment.aggregate([
       {
         $sort: { appointmentDate: 1  },
-        
+
         $lookup: {
           from: "doctors", // Collection to join (Doctor)
           localField: "doctorId", // Field in Appointment collection
@@ -76,7 +76,7 @@ router.get("/appointments", async (req, res) => {
 
     // console.log(appointments);
 
-    return res.status(201).json(appointments);
+    return res.status(200).json(appointments);
   } catch (err) {
     console.log("this is catch erroor", err.message);
     return res
