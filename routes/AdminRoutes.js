@@ -50,18 +50,66 @@ router.get("/appointments", isLoggedIn, AuthMiddlewares, async (req, res) => {
 
 router.get("/totalAppointment", async  (req,res)=>{
   // res.json({ message: "Hellow chal raha hai" }); 
-  const {uerId} = req.body;
-  
-try{
-  
-  const AllregisterdUSer = await Appointment.find(uerId).populate("appointmentStatus");
-  console.log("AllregisterdUSer---------",AllregisterdUSer)
-  res.status(200).json(AllregisterdUSer);
 
-}catch(err){
-  res.status(500).json({ error: err.message });
+  try{
+  const AllAppointment  = await  Appointment.aggregate([
+    { $sort: { appointmentDate: 1 } },
+    { $match: { isDeleted: false } },
+   
+   {
+    $lookup:{
+      from : "users",
+      localField: "userId",
+      foreignField:"_id",
+      as : "userDetails",
+    },
+   },
+   { $unwind: "$userDetails" },
+    {
+      $lookup: {
+        from: "doctors", // ✅ Ensure this matches your DB collection name
+        localField: "doctorId",
+        foreignField: "_id",
+        as: "doctorDetails",
+      },
+    },
+    { $unwind: "$doctorDetails" }, // ✅ Convert array to object
 
-}
+    {
+      $lookup: {
+        from: "departments", // ✅ Ensure this matches your DB collection name
+        localField: "departmentId",
+        foreignField: "_id",
+        as: "departmentDetails",
+      },
+    },
+    { $unwind: "$departmentDetails" },
+
+    {
+      $project: {
+        _id: 1,
+        patientName: 1,
+        patientemail: 1,
+        appointmentDate: 1,
+        appointmentStatus: 1,
+        doctorName: "$doctorDetails.name", // ✅ Fetching doctor's name
+        doctorEmail: "$doctorDetails.email", // ✅ Fetching doctor's email
+        department: "$departmentDetails.name", // ✅ Fetching department name
+      },
+    },
+  ])
+  return res.status(200).json(AllAppointment);
+
+  }catch(err){
+    console.log("this is catch error", err.message);
+    return res.status(500).json({
+      Error: "Internal server error",
+      err: err.message,
+    });
+  
+
+  }
+ 
 });
 
 // Update Appointment
