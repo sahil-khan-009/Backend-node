@@ -92,9 +92,11 @@ router.get("/totalAppointment", async  (req,res)=>{
         patientemail: 1,
         appointmentDate: 1,
         appointmentStatus: 1,
+        mainUser : " $userDetails.userName",
         doctorName: "$doctorDetails.name", // ✅ Fetching doctor's name
         doctorEmail: "$doctorDetails.email", // ✅ Fetching doctor's email
         department: "$departmentDetails.name", // ✅ Fetching department name
+         
       },
     },
   ])
