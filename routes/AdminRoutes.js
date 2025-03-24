@@ -92,7 +92,7 @@ router.get("/totalAppointment", async  (req,res)=>{
         patientemail: 1,
         appointmentDate: 1,
         appointmentStatus: 1,
-        mainUser: "$userDetails.userName", // ✅ Correct reference
+        mainUser: "$userDetails.userName", // ✅ Corrected projection
         doctorName: "$doctorDetails.name",
         doctorEmail: "$doctorDetails.email",
         department: "$departmentDetails.name",
