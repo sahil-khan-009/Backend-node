@@ -61,7 +61,7 @@ router.get("/totalAppointment", async  (req,res)=>{
       from : "users",
       localField: "userId",
       foreignField:"_id",
-      as : "userDetails",
+      as: "userDetails",
     },
    },
    { $unwind: "$userDetails" },
@@ -92,7 +92,7 @@ router.get("/totalAppointment", async  (req,res)=>{
         patientemail: 1,
         appointmentDate: 1,
         appointmentStatus: 1,
-        mainUser: "$userDetails.userName", // ✅ Corrected projection
+        mainUser: "$userDetails", // ✅ Corrected projection
         doctorName: "$doctorDetails.name",
         doctorEmail: "$doctorDetails.email",
         department: "$departmentDetails.name",
