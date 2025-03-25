@@ -53,8 +53,8 @@ router.get("/totalAppointment", async  (req,res)=>{
 
   try{
   const AllAppointment  = await  Appointment.aggregate([
-    { $sort: { appointmentDate: 1 } },
-    { $match: { isDeleted: false } },
+    // { $sort: { appointmentDate: 1 } },
+    // { $match: { isDeleted: false } },
    
    {
     $lookup:{
