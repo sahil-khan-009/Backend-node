@@ -184,15 +184,17 @@ router.patch("/appointments/:id/:status", async (req, res) => {
       id,
       { appointmentStatus: status === "confirm" ? "confirmed" : "cancelled" },
       { new: true }
-    );
-// console.log("updateStatus======",updateStatus)
+    ).populate("doctorId" , "name");
+console.log("updateStatus======",updateStatus)
     if (!updateStatus) {
       return res.status(404).json({ error: "Appointment not found" });
     }
+    const doctorName = updateStatus.doctorId ? updateStatus.doctorId.name : "Unknown Doctor";
 
     // Send notification email
-    const email = updateStatus.patientemail; // Assuming you store the patient's email in the appointment schema
-    const message = `Dear ${updateStatus.patientName}, your appointment with Dr. ${updateStatus.doctorName} on ${new Date(
+    const email =  `aestheticaesthetic236@gmail.com`;//updateStatus.patientemail; // Assuming you store the patient's email in the appointment schema
+    console.log("email----",email)
+    const message = `Dear ${updateStatus.patientName}, your appointment with Dr. ${doctorName} on ${new Date(
       updateStatus.appointmentDate 
     ).toDateString()} has been ${updateStatus.appointmentStatus}.`;
 
