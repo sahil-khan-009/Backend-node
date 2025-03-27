@@ -3,11 +3,10 @@ const Appointment = require("../models/Appointment");
 const router = express.Router();
 const AuthMiddlewares = require("../middlewares/AuthMiddleware");
 const isLoggedIn = require("../middlewares/IsLoggedin");
-const sendEmail = require('../utils/AppointmentMail');
+const sendEmail = require("../utils/AppointmentMail");
 const userModel = require("../models/Users");
 
 // Admin route to fetch appointments
-
 
 router.get("/appointments", isLoggedIn, AuthMiddlewares, async (req, res) => {
   try {
@@ -47,70 +46,65 @@ router.get("/appointments", isLoggedIn, AuthMiddlewares, async (req, res) => {
 
 // ALL REGISTERED USER ND APPOINTMNTS STATUS
 
+router.get("/totalAppointment", async (req, res) => {
+  // res.json({ message: "Hellow chal raha hai" });
 
-router.get("/totalAppointment", async  (req,res)=>{
-  // res.json({ message: "Hellow chal raha hai" }); 
+  try {
+    const AllAppointment = await Appointment.aggregate([
+      // { $sort: { appointmentDate: 1 } },
+      // { $match: { isDeleted: false } },
 
-  try{
-  const AllAppointment  = await  Appointment.aggregate([
-    // { $sort: { appointmentDate: 1 } },
-    // { $match: { isDeleted: false } },
-   
-   {
-    $lookup:{
-      from : "users",
-      localField: "userId",
-      foreignField:"_id",
-      as: "userDetails",
-    },
-   },
-   { $unwind: "$userDetails" },
-    {
-      $lookup: {
-        from: "doctors", // ✅ Ensure this matches your DB collection name
-        localField: "doctorId",
-        foreignField: "_id",
-        as: "doctorDetails",
+      {
+        $lookup: {
+          from: "users",
+          localField: "userId",
+          foreignField: "_id",
+          as: "userDetails",
+        },
       },
-    },
-    { $unwind: "$doctorDetails" }, // ✅ Convert array to object
-
-    {
-      $lookup: {
-        from: "departments", // ✅ Ensure this matches your DB collection name
-        localField: "departmentId",
-        foreignField: "_id",
-        as: "departmentDetails",
+      { $unwind: "$userDetails" },
+      {
+        $lookup: {
+          from: "doctors", // ✅ Ensure this matches your DB collection name
+          localField: "doctorId",
+          foreignField: "_id",
+          as: "doctorDetails",
+        },
       },
-    },
-    { $unwind: "$departmentDetails" },
+      { $unwind: "$doctorDetails" }, // ✅ Convert array to object
 
-    {
-      $project: {
-        _id: 1,
-        patientName: 1,
-        patientemail: 1,
-        appointmentDate: 1,
-        appointmentStatus: 1,
-        registerUser: "$userDetails.userEmail", // ✅ Corrected projection
-        doctorName: "$doctorDetails.name",
-        doctorEmail: "$doctorDetails.email",
-        department: "$departmentDetails.name",
+      {
+        $lookup: {
+          from: "departments", // ✅ Ensure this matches your DB collection name
+          localField: "departmentId",
+          foreignField: "_id",
+          as: "departmentDetails",
+        },
       },
-    },
-  ])
-  return res.status(200).json(AllAppointment);
+      { $unwind: "$departmentDetails" },
 
-  }catch(err){
+      {
+        $project: {
+          _id: 1,
+          patientName: 1,
+          patientemail: 1,
+          appointmentDate: 1,
+          appointmentStatus: 1,
+          registerUser: "$userDetails.userEmail", // ✅ Corrected projection
+          doctorName: "$doctorDetails.name",
+          doctorEmail: "$doctorDetails.email",
+          department: "$departmentDetails.name",
+        },
+      },
+    ]);
+    return res.status(200).json(AllAppointment);
+  } catch (err) {
     console.log("this is catch error", err.message);
     return res.status(500).json({
       Error: "Internal server error",
       err: err.message,
     });
-  
-
   }
- 
 });
 
 // Update Appointment
@@ -166,7 +160,6 @@ router.delete("/appointments/:id", async (req, res) => {
 
 //updating status of pending requests
 
-
 router.patch("/appointments/:id/:status", async (req, res) => {
   try {
     const { id, status } = req.params;
@@ -184,32 +177,37 @@ router.patch("/appointments/:id/:status", async (req, res) => {
       id,
       { appointmentStatus: status === "confirm" ? "confirmed" : "cancelled" },
       { new: true }
-    ).populate("doctorId" , "name");
-console.log("updateStatus======",updateStatus);
+    ).populate("doctorId", "name");
+    console.log("updateStatus======", updateStatus);
     if (!updateStatus) {
       return res.status(404).json({ error: "Appointment not found" });
     }
-    const doctorName = updateStatus.doctorId ? updateStatus.doctorId.name : "Unknown Doctor";
+    const doctorName = updateStatus.doctorId
+      ? updateStatus.doctorId.name
+      : "Unknown Doctor";
 
     // Send notification email
-    const email =  `aestheticaesthetic236@gmail.com`;//updateStatus.patientemail; // Assuming you store the patient's email in the appointment schema
+    const email = `aestheticaesthetic236@gmail.com`; //updateStatus.patientemail; // Assuming you store the patient's email in the appointment schema
     // console.log("email----",email)
-    const message = `Dear ${updateStatus.patientName}, your appointment with Dr. ${doctorName} on ${new Date(
-      updateStatus.appointmentDate 
+    const message = `Dear ${
+      updateStatus.patientName
+    }, your appointment with Dr. ${doctorName} on ${new Date(
+      updateStatus.appointmentDate
     ).toDateString()} has been ${updateStatus.appointmentStatus}.`;
 
     await sendEmail(email, "Appointment Status Updated", message);
 
     res.status(200).json({
       updateStatus,
-      message: updateStatus.appointmentStatus === "confirmed" ? "Appointment Approved" : "Appointment Canceled",
+      message:
+        updateStatus.appointmentStatus === "confirmed"
+          ? "Appointment Approved"
+          : "Appointment Canceled",
     });
-    
   } catch (err) {
     console.error("Error is ", err.message);
     res.status(500).json({ error: err.message });
   }
 });
-
 
 module.exports = router;
