@@ -210,4 +210,43 @@ router.patch("/appointments/:id/:status", async (req, res) => {
   }
 });
 
+
+router.post('/payment', async (req, res) => {
+  try {
+    const { departmentPay, token } = req.body;
+
+    if (!departmentPay || !token) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    console.log("Department:", departmentPay);
+    console.log("Department Price:", departmentPay.price);
+
+    const idempotencyKey = uuidv4();
+
+    // Create a customer
+    const customer = await stripe.customers.create({
+      email: token.email,
+      source: token.id,
+    });
+
+    // Create a charge
+    const charge = await stripe.charges.create(
+      {
+        amount: departmentPay.price * 100, // Convert to cents
+        currency: 'usd',
+        customer: customer.id,
+        receipt_email: token.email,
+        description: `Payment from ${departmentPay.name}`,
+      },
+      { idempotencyKey }
+    );
+
+    res.status(200).json(charge);
+  } catch (err) {
+    console.error("Payment Error:", err);
+    res.status(500).json({ error: "Payment failed", details: err.message });
+  }
+});
+
 module.exports = router;
