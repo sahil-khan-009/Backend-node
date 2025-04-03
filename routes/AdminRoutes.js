@@ -5,6 +5,9 @@ const AuthMiddlewares = require("../middlewares/AuthMiddleware");
 const isLoggedIn = require("../middlewares/IsLoggedin");
 const sendEmail = require("../utils/AppointmentMail");
 const userModel = require("../models/Users");
+const stripe = require('stripe')('sk_test_51R7YKDDRfbAZZF8H01jsIJhWynZ7JfAZlykyqxSiVRknwYr1vQuB85EbdarZUbHCdk5XlXXp7pFJARQKjwRHci9F00Td5BkpW6');
+const { v4: uuidv4 } = require('uuid');
+
 
 // Admin route to fetch appointments
 
@@ -210,43 +213,44 @@ router.patch("/appointments/:id/:status", async (req, res) => {
   }
 });
 
-
-router.post('/payment', async (req, res) => {
+router.post("/payment", async (req, res) => {
   try {
-    const { departmentPay, token } = req.body;
+    const { departmentPay, paymentMethodId } = req.body;
 
-    if (!departmentPay || !token) {
-      return res.status(400).json({ error: "Missing required fields" });
+    if (!paymentMethodId || !departmentPay?.price) {
+      return res.status(400).json({ error: "Invalid payment details" });
     }
 
-    console.log("Department:", departmentPay);
-    console.log("Department Price:", departmentPay.price);
+    const price = Number(departmentPay.price);
+    if (isNaN(price) || price <= 0) {
+      return res.status(400).json({ error: "Invalid price value" });
+    }
+
+    console.log("Processing payment for:", departmentPay.name);
+    console.log("Price in cents:", price * 100);
 
     const idempotencyKey = uuidv4();
 
-    // Create a customer
-    const customer = await stripe.customers.create({
-      email: token.email,
-      source: token.id,
+    // Create a Payment Intent
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: price * 100, // Convert to cents
+      currency: "usd",
+      payment_method: paymentMethodId,
+      confirm: true,
     });
 
-    // Create a charge
-    const charge = await stripe.charges.create(
-      {
-        amount: departmentPay.price * 100, // Convert to cents
-        currency: 'usd',
-        customer: customer.id,
-        receipt_email: token.email,
-        description: `Payment from ${departmentPay.name}`,
-      },
-      { idempotencyKey }
-    );
-
-    res.status(200).json(charge);
+    res.status(200).json({
+      success: true,
+      paymentIntent,
+    });
   } catch (err) {
     console.error("Payment Error:", err);
-    res.status(500).json({ error: "Payment failed", details: err.message });
+    res.status(500).json({
+      error: "Payment failed",
+      details: err.message,
+    });
   }
 });
+
 
 module.exports = router;
