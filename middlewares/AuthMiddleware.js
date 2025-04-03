@@ -3,7 +3,7 @@ module.exports = async function (req, res, next) {
         // Check if the user is authenticated
         const user = req.user; // Populated by isLoggedIn middleware
 
-        console.log("User is in admin middleware-------", user);
+        // console.log("User is in admin middleware-------", user);
 
         // Validate if the user object exists
         if (!user) {

@@ -27,7 +27,7 @@ const userModel = require("../models/Users");
 module.exports = async function (req, res, next) {
   try {
 
-    console.log("process.env.jwtKey",process.env.JWT_KEY);
+    // console.log("process.env.jwtKey",process.env.JWT_KEY);
     // Extract token from Authorization header
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -39,7 +39,7 @@ module.exports = async function (req, res, next) {
 
     // Verify the token
     const decoded = jwt.verify(token, process.env.JWT_KEY);
-    console.log("decoded--------------------",decoded)
+    // console.log("decoded--------------------",decoded)
 
     // Check if the user exists in the database
     const user = await userModel.findOne({ userEmail: decoded.userEmail }).select("-password");
