@@ -2,8 +2,8 @@ require("dotenv").config();
 const express = require('express');
 const app = express();
 // Add a  stripe key
-const stripe = require('stripe')('sk_test_51R7YKDDRfbAZZF8HRPJitcD3BIPL8pVv8JDOsVyAJiHK4WLtORzsB3NCyIJUwae5R8fE8UIvfjuVAYY4tYd9K7IZ001uGqFgov');
-const { v4: uuidv4 } = require('uuid');
+// const stripe = require('stripe')('sk_test_51R7YKDDRfbAZZF8HRPJitcD3BIPL8pVv8JDOsVyAJiHK4WLtORzsB3NCyIJUwae5R8fE8UIvfjuVAYY4tYd9K7IZ001uGqFgov');
+// const { v4: uuidv4 } = require('uuid');
 const mongoose = require('mongoose');
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
