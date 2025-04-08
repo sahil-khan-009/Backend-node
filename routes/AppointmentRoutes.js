@@ -1,6 +1,7 @@
 const express = require("express");
 const Appointment = require("../models/Appointment");
 const Doctor = require("../models/DoctorSchema");
+const Users = require("../models/Users");
 const router = express.Router();
 const isLoggedIn = require("../middlewares/IsLoggedin");
 const mongoose = require("mongoose");
@@ -97,6 +98,23 @@ router.get("/appointments", async (req, res) => {
       Error: "Internal server error",
       err: err.message,
     });
+  }
+});
+
+
+
+//Get Api
+router.get("/LoggedInUserName", async (req, res) => {
+  try {
+    const userName = await Users.findById(req.user._id).select("userName");
+    if (!userName) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    console.log("userName--------------------", userName);
+    res.status(200).json({ userName: userName.userName });
+  } catch (err) {
+    console.log("This is catch error", err.message);
+    res.status(500).json({ error: err.message });
   }
 });
 
