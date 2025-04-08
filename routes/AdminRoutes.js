@@ -5,8 +5,8 @@ const AuthMiddlewares = require("../middlewares/AuthMiddleware");
 const isLoggedIn = require("../middlewares/IsLoggedin");
 const sendEmail = require("../utils/AppointmentMail");
 const userModel = require("../models/Users");
-const stripe = require('stripe')('sk_test_51R7YKDDRfbAZZF8H01jsIJhWynZ7JfAZlykyqxSiVRknwYr1vQuB85EbdarZUbHCdk5XlXXp7pFJARQKjwRHci9F00Td5BkpW6');
 const { v4: uuidv4 } = require('uuid');
+const stripe = require("stripe")("sk_test_51R7YKDDRfbAZZF8HOLYEtXDV8NmoyvhtVYjSs3coVuCOSmKOsKERkdL0s5wWohRyhHdkN03Y54fM47Cu1hr5qeJo00s8yRHEoY");
 
 
 // Admin route to fetch appointments
@@ -213,44 +213,83 @@ router.patch("/appointments/:id/:status", async (req, res) => {
   }
 });
 
-router.post("/payment", async (req, res) => {
+
+
+
+router.post("/create-payment-intent", async (req, res) => {
   try {
-    const { departmentPay, paymentMethodId } = req.body;
+      const { amount, currency } = req.body;
 
-    if (!paymentMethodId || !departmentPay?.price) {
-      return res.status(400).json({ error: "Invalid payment details" });
-    }
+      const paymentIntent = await stripe.paymentIntents.create({
+          amount, // Amount in cents (e.g., 5000 = $50.00)
+          currency,
+          payment_method_types: ["card"], // Supports cards
+      });
 
-    const price = Number(departmentPay.price);
-    if (isNaN(price) || price <= 0) {
-      return res.status(400).json({ error: "Invalid price value" });
-    }
-
-    console.log("Processing payment for:", departmentPay.name);
-    console.log("Price in cents:", price * 100);
-
-    const idempotencyKey = uuidv4();
-
-    // Create a Payment Intent
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: price * 100, // Convert to cents
-      currency: "usd",
-      payment_method: paymentMethodId,
-      confirm: true,
-    });
-
-    res.status(200).json({
-      success: true,
-      paymentIntent,
-    });
-  } catch (err) {
-    console.error("Payment Error:", err);
-    res.status(500).json({
-      error: "Payment failed",
-      details: err.message,
-    });
+      res.json({ clientSecret: paymentIntent.client_secret });
+  } catch (error) {
+      res.status(500).json({ error: error.message });
   }
 });
 
 
+
 module.exports = router;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// router.post("/payment", async (req, res) => {
+//   try {
+//     const { departmentPay, paymentMethodId } = req.body;
+
+//     if (!paymentMethodId || !departmentPay?.price) {
+//       return res.status(400).json({ error: "Invalid payment details" });
+//     }
+
+//     const price = Number(departmentPay.price);
+//     if (isNaN(price) || price <= 0) {
+//       return res.status(400).json({ error: "Invalid price value" });
+//     }
+
+//     console.log("Processing payment for:", departmentPay.name);
+//     console.log("Price in cents:", price * 100);
+
+//     const idempotencyKey = uuidv4();
+
+//     // Create a Payment Intent
+//     const paymentIntent = await stripe.paymentIntents.create({
+//       amount: price * 100, // Convert to cents
+//       currency: "usd",
+//       payment_method: paymentMethodId,
+//       confirm: true,
+//     });
+
+//     res.status(200).json({
+//       success: true,
+//       paymentIntent,
+//     });
+//   } catch (err) {
+//     console.error("Payment Error:", err);
+//     res.status(500).json({
+//       error: "Payment failed",
+//       details: err.message,
+//     });
+//   }
+// });
