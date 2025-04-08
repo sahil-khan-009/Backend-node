@@ -74,6 +74,22 @@ router.get("/appointments", async (req, res) => {
       },
     ]);
 
+ router.get('/totalAppointments', async (req, res) => {
+
+  try{
+    const totalAppointments = await  Appointment.find({})
+
+    res.status(200).json({
+      totalAppointments,
+    });
+
+  }catch(err){
+    console.error("Error fetching total appointments:", err.message);
+    return res.status(500).json({ error: err.message });
+  }
+ })
+
+
     return res.status(200).json(appointments);
   } catch (err) {
     console.log("this is catch error", err.message);

@@ -65,7 +65,7 @@ module.exports.loginUser = async function (req, res) {
         domain: "",
       });
 
-      res.json({ message: "You can login", token, role: user.role });
+      res.json({ message: "You can login", token, role: user.role , name: user.userName });
     } else {
       return res.send("email or password incorrect");
     }
