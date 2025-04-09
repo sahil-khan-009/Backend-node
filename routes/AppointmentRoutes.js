@@ -109,6 +109,7 @@ router.get("/appointments", async (req, res) => {
 // Example route handler
 router.get('/profile', async (req, res) => {
   try{
+    console.log("req.user in profile route:", req.user);  
     if (req.user) {
       // Access the user's information from req.user
       res.json({ user: req.user, message: "Profile data." });
