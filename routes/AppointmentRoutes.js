@@ -104,20 +104,24 @@ router.get("/appointments", async (req, res) => {
 
 
 //Get Api
-router.get("/LoggedInUserName", async (req, res) => {
-  try {
-    const userName = await Users.findById(req.user._id).select("userName");
-    if (!userName) {
-      return res.status(404).json({ error: "User not found" });
-    }
-    console.log("userName--------------------", userName);
-    res.status(200).json({ userName: userName.userName });
-  } catch (err) {
-    console.log("This is catch error", err.message);
-    res.status(500).json({ error: err.message });
-  }
-});
+// ... (Your middleware)
 
+// Example route handler
+router.get('/profile', async (req, res) => {
+  try{
+    if (req.user) {
+      // Access the user's information from req.user
+      res.json({ user: req.user, message: "Profile data." });
+    } else {
+      res.status(401).json({ message: "Unauthorized" });
+    }
+
+  }catch(err){
+    console.error("Error fetching profile:", err.message);
+    return res.status(500).json({ error: err.message });
+  }
+  
+});
 
 // UPDATE API
 
