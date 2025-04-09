@@ -107,7 +107,7 @@ router.get("/appointments", async (req, res) => {
 // ... (Your middleware)
 
 // Example route handler
-router.get('/profile', async (req, res) => {
+router.get('/profile', isLoggedIn, async (req, res) => {
   try{
     console.log("req.user in profile route:", req.user);  
     if (req.user) {
