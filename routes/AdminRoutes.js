@@ -1,5 +1,6 @@
 const express = require("express");
 const Appointment = require("../models/Appointment");
+const Department = require("../models/DepartmentSchema");
 const router = express.Router();
 const AuthMiddlewares = require("../middlewares/AuthMiddleware");
 const isLoggedIn = require("../middlewares/IsLoggedin");
@@ -211,6 +212,24 @@ router.patch("/appointments/:id/:status", async (req, res) => {
     console.error("Error is ", err.message);
     res.status(500).json({ error: err.message });
   }
+});
+
+
+// <-----------------All Get api Department----------------->
+
+router.get("/getDepartment", async (req, res) => {
+try{
+  const allDepartment = await Department.find().populate("doctors" );
+  console.log("allDepartment", allDepartment);
+  res.status(200).json(allDepartment);
+
+}catch(err){
+  console.log("This is catch error-----", err.message);
+  res.status(500).json({ message: "Server internal error",
+ error: err.message,
+   });
+
+}
 });
 
 
