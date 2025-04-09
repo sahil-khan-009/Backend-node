@@ -1,61 +1,61 @@
 const jwt = require("jsonwebtoken");
 const userModel = require("../models/Users");
 
-// const jwt = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 
-// module.exports = (req, res, next) => {
-//     const authHeader = req.headers.authorization;
+module.exports = (req, res, next) => {
+    const authHeader = req.headers.authorization;
     
-//     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-//         return res.status(401).json({ message: "You need to log in first." });
-//     }
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        return res.status(401).json({ message: "You need to log in first." });
+    }
 
-//     const token = authHeader.split(" ")[1]; // Extract token after 'Bearer '
+    const token = authHeader.split(" ")[1]; // Extract token after 'Bearer '
 
-//     jwt.verify(token, process.env.JWT_KEY, (err, decoded) => {
-//         if (err) {
-//             return res.status(403).json({ message: "Invalid or expired token." });
-//         }
+    jwt.verify(token, process.env.JWT_KEY, (err, decoded) => {
+        if (err) {
+            return res.status(403).json({ message: "Invalid or expired token." });
+        }
 
-//         req.user = decoded; // Store decoded user info in req.user
-//         next(); // Proceed to the next middleware
-//     });
-// }
+        req.user = decoded; // Store decoded user info in req.user
+        next(); // Proceed to the next middleware
+    });
+}
 // const jwt = require("jsonwebtoken");
 // const userModel = require("../models/userModel");
 
-module.exports = async function (req, res, next) {
-  try {
+// module.exports = async function (req, res, next) {
+//   try {
 
-    // console.log("process.env.jwtKey",process.env.JWT_KEY);
-    // Extract token from Authorization header
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({ message: "You need to log in first." });
-    }
+//     // console.log("process.env.jwtKey",process.env.JWT_KEY);
+//     // Extract token from Authorization header
+//     const authHeader = req.headers.authorization;
+//     if (!authHeader || !authHeader.startsWith("Bearer ")) {
+//       return res.status(401).json({ message: "You need to log in first." });
+//     }
 
-    // Extract token from "Bearer <token>" format
-    const token = authHeader.split(" ")[1]; // Extract token after 'Bearer ' qwfyuyt345654edcvnbvdsert
+//     // Extract token from "Bearer <token>" format
+//     const token = authHeader.split(" ")[1]; // Extract token after 'Bearer ' qwfyuyt345654edcvnbvdsert
 
-    // Verify the token
-    const decoded = jwt.verify(token, process.env.JWT_KEY);
-    // console.log("decoded--------------------",decoded)
+//     // Verify the token
+//     const decoded = jwt.verify(token, process.env.JWT_KEY);
+//     // console.log("decoded--------------------",decoded)
 
-    // Check if the user exists in the database
-    const user = await userModel.findOne({ userEmail: decoded.userEmail }).select("-password");
-    if (!user) {
-      return res.status(404).json({ message: "User not found. Please log in again." });
-    }
+//     // Check if the user exists in the database
+//     const user = await userModel.findOne({ userEmail: decoded.userEmail }).select("-password");
+//     if (!user) {
+//       return res.status(404).json({ message: "User not found. Please log in again." });
+//     }
 
-    // Attach user to the request object
-    req.user = user;
+//     // Attach user to the request object
+//     req.user = user;
 
-    next(); // Proceed to the next middleware or route handler
-  } catch (err) {
-    console.error("Error in isLoggedIn middleware:", err.message);
-    return res.status(401).json({ message: "Authentication failed. Please log in again." });
-  }
-};
+//     next(); // Proceed to the next middleware or route handler
+//   } catch (err) {
+//     console.error("Error in isLoggedIn middleware:", err.message);
+//     return res.status(401).json({ message: "Authentication failed. Please log in again." });
+//   }
+// };
 
 // module.exports = async function (req, res, next) {
 //   try {
