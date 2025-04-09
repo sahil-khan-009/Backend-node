@@ -37,9 +37,9 @@ router.post("/appointments", isLoggedIn, async (req, res) => {
 router.get("/appointments", async (req, res) => {
   try {
     const appointments = await Appointment.aggregate([
-      { $sort: { appointmentDate: 1 } }, // ✅ Corrected $sort syntax
+     { $sort: { appointmentDate: 1 } }, // ✅ Corrected $sort syntax
 
-      { $match: { isDeleted: false } }, // ✅ Ensure only non-deleted appointments
+       { $match: { isDeleted: false } }, // ✅ Ensure only non-deleted appointments
 
       {
         $lookup: {
@@ -185,6 +185,7 @@ router.delete("/deleteAppointment/:id", isLoggedIn, async (req, res) => {
       id,
       {
         $set: {
+          appointmentStatus:"cancelled",
           isDeleted: true,
           deletedAt: new Date(),
           deletedBy: req.user ? req.user._id : null, // Ensure req.user exists
