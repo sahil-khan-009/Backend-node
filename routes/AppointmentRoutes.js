@@ -9,37 +9,111 @@ const mongoose = require("mongoose");
 //POST API
 router.post("/appointments", isLoggedIn, async (req, res) => {
   try {
-    console.log("req.body================", req.body);
-    const doctorId = req.body.doctorId;
-    console.log("doctorId----------", doctorId);
+    // console.log("req.body================", req.body);
+    const { appointmentDate, doctorId, mode } = req.body;
+    if (mode === "") {
+      return res
+        .status(400)
+        .json({ message: "Please select mode of appointment" });
+    }
 
-    // const existingAppointment = await Appointment.findOne({ patientemail: req.body.patientemail });
-    // if (existingAppointment) {
-    //   return res.status(400).json({ message: "Email already exists" });
-    // }
+    const selectedDate = new Date(appointmentDate);
+    const selectedDay = selectedDate.toLocaleDateString("en-US", {
+      weekday: "long",
+    }); // e.g., "Wednesday"
 
-    const appointment = new Appointment({ ...req.body, userId: req.user._id }); //
+    // Step 1: Fetch doctor and check availability
+    const doctor = await Doctor.findById(doctorId);
+    if (!doctor) {
+      return res.status(404).json({ message: "Doctor not found." });
+    }
 
-    // console.log("userId: req.user._id-----------------",req.user._id)
-    // console.log("appointment-----Created",appointment);
-    // console.log("user------>", req.user);
+    if (!doctor.availability.includes(selectedDay)) {
+      return res.status(400).json({
+        message: `Doctor is not available on ${selectedDay}. Please select another date.`,
+      });
+    }
+
+    // Step 2: Check if doctor already has 15 appointments on this date
+    const startOfDay = new Date(selectedDate);
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(selectedDate);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    const appointmentCount = await Appointment.countDocuments({
+      doctorId,
+      appointmentDate: { $gte: startOfDay, $lte: endOfDay },
+      isDeleted: false,
+    });
+
+    if (appointmentCount >= 15) {
+      return res.status(400).json({
+        message:
+          "Doctor is fully booked for this day. Please choose another doctor or date.",
+      });
+    }
+
+    // ✅ All good: Save appointment
+    const appointment = new Appointment({
+      ...req.body,
+      userId: req.user._id,
+    });
+
     const savedAppointment = await appointment.save();
+
     res.status(201).json({
-      message: "Appointment requested successfully",
+      message: "Appointment created successfully.",
       appointment: savedAppointment,
     });
   } catch (err) {
+    console.error("Appointment error:", err);
     res.status(500).json({ error: err.message });
   }
 });
+
+// router.post("/appointments", isLoggedIn, async (req, res) => {
+//   try {
+//     console.log("req.body================", req.body);
+//     // const doctorId = req.body.doctorId;
+//     const {appointmentDate, doctorId} = req.body;
+
+//     const startOfDay = new Date(appointmentDate);
+//     startOfDay.setHours(0, 0, 0, 0); // Set to start of the day
+//     const endOfDay = new Date(appointmentDate);
+//     endOfDay.setHours(23, 59, 59, 999); // Set to end of the day
+
+//     const appointmentCount = await Appointment.countDocuments({
+//       appointmentDate: { $gte: startOfDay, $lte: endOfDay },
+//       isDeleted: false, // Ignore deleted appointments
+//     });
+
+//     // const existingAppointment = await Appointment.findOne({ patientemail: req.body.patientemail });
+//     // if (existingAppointment) {
+//     //   return res.status(400).json({ message: "Email already exists" });
+//     // }
+
+//     const appointment = new Appointment({ ...req.body, userId: req.user._id }); //
+
+//     // console.log("userId: req.user._id-----------------",req.user._id)
+//     // console.log("appointment-----Created",appointment);
+//     // console.log("user------>", req.user);
+//     const savedAppointment = await appointment.save();
+//     res.status(201).json({
+//       message: "Appointment requested successfully",
+//       appointment: savedAppointment,
+//     });
+//   } catch (err) {
+//     res.status(500).json({ error: err.message });
+//   }
+// });
 
 // GET API ()
 router.get("/appointments", async (req, res) => {
   try {
     const appointments = await Appointment.aggregate([
-     { $sort: { appointmentDate: 1 } }, // ✅ Corrected $sort syntax
+      { $sort: { appointmentDate: 1 } }, // ✅ Corrected $sort syntax
 
-       { $match: { isDeleted: false } }, // ✅ Ensure only non-deleted appointments
+      { $match: { isDeleted: false } }, // ✅ Ensure only non-deleted appointments
 
       {
         $lookup: {
@@ -68,7 +142,7 @@ router.get("/appointments", async (req, res) => {
           patientemail: 1,
           appointmentDate: 1,
           appointmentStatus: 1,
-          isDeleted : 1,
+          isDeleted: 1,
           doctorName: "$doctorDetails.name", // ✅ Fetching doctor's name
           doctorEmail: "$doctorDetails.email", // ✅ Fetching doctor's email
           department: "$departmentDetails.name", // ✅ Fetching department name
@@ -76,21 +150,18 @@ router.get("/appointments", async (req, res) => {
       },
     ]);
 
- router.get('/totalAppointments', async (req, res) => {
+    router.get("/totalAppointments", async (req, res) => {
+      try {
+        const totalAppointments = await Appointment.find({});
 
-  try{
-    const totalAppointments = await  Appointment.find({})
-
-    res.status(200).json({
-      totalAppointments,
+        res.status(200).json({
+          totalAppointments,
+        });
+      } catch (err) {
+        console.error("Error fetching total appointments:", err.message);
+        return res.status(500).json({ error: err.message });
+      }
     });
-
-  }catch(err){
-    console.error("Error fetching total appointments:", err.message);
-    return res.status(500).json({ error: err.message });
-  }
- })
-
 
     return res.status(200).json(appointments);
   } catch (err) {
@@ -102,27 +173,23 @@ router.get("/appointments", async (req, res) => {
   }
 });
 
-
-
 //Get Api
 // ... (Your middleware)
 
 // Example route handler
-router.get('/profile', isLoggedIn, async (req, res) => {
-  try{
-    console.log("req.user in profile route:", req.user);  
+router.get("/profile", isLoggedIn, async (req, res) => {
+  try {
+    console.log("req.user in profile route:", req.user);
     if (req.user) {
       // Access the user's information from req.user
       res.json({ user: req.user, message: "Profile data." });
     } else {
       res.status(401).json({ message: "Unauthorized" });
     }
-
-  }catch(err){
+  } catch (err) {
     console.error("Error fetching profile:", err.message);
     return res.status(500).json({ error: err.message });
   }
-  
 });
 
 // UPDATE API
@@ -186,7 +253,7 @@ router.delete("/deleteAppointment/:id", isLoggedIn, async (req, res) => {
       id,
       {
         $set: {
-          appointmentStatus:"cancelled",
+          appointmentStatus: "cancelled",
           isDeleted: true,
           deletedAt: new Date(),
           deletedBy: req.user ? req.user._id : null, // Ensure req.user exists
@@ -200,12 +267,10 @@ router.delete("/deleteAppointment/:id", isLoggedIn, async (req, res) => {
     }
 
     console.log("Appointment deleted successfully:", deleteAppointment);
-    return res
-      .status(200)
-      .json({
-        message: "Appointment deleted successfully",
-        data: deleteAppointment,
-      });
+    return res.status(200).json({
+      message: "Appointment deleted successfully",
+      data: deleteAppointment,
+    });
   } catch (error) {
     console.error("Error deleting appointment:", error);
     return res.status(500).json({ error: "Internal Server Error" });
