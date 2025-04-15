@@ -63,7 +63,6 @@ deletedBy: {
   default: null,
 },
 
-
 mode :{
   type: String,
   enum: ["online", "offline"],

@@ -9,8 +9,9 @@ const mongoose = require("mongoose");
 //POST API
 router.post("/appointments", isLoggedIn, async (req, res) => {
   try {
-    // console.log("req.body================", req.body);
+    console.log("req.body================", req.body);
     const { appointmentDate, doctorId, mode } = req.body;
+ 
     if (mode === "") {
       return res
         .status(400)
@@ -143,6 +144,7 @@ router.get("/appointments", async (req, res) => {
           appointmentDate: 1,
           appointmentStatus: 1,
           isDeleted: 1,
+          mode: 1,
           doctorName: "$doctorDetails.name", // ✅ Fetching doctor's name
           doctorEmail: "$doctorDetails.email", // ✅ Fetching doctor's email
           department: "$departmentDetails.name", // ✅ Fetching department name

@@ -21,9 +21,13 @@ const userModel = require("../models/Users");
 //         next(); // Proceed to the next middleware
 //     });
 // }
-// const jwt = require("jsonwebtoken");
-// const userModel = require("../models/userModel");
 
+
+
+
+
+//  ye middleware use tab karna hai jab production pe kaam karna ho yaani live pe
+ 
 module.exports = async function (req, res, next) {
   try {
 
@@ -57,6 +61,12 @@ module.exports = async function (req, res, next) {
     return res.status(401).json({ message: "Authentication failed. Please log in again." });
   }
 };
+
+
+
+
+
+// ye middleware use tab karna hai jab local pe kaam karna ho 
 
 // module.exports = async function (req, res, next) {
 //   try {

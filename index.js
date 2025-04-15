@@ -83,7 +83,7 @@ app.get('/', (req,res)=>{
 
 const MONGO_URI = process.env.MONGO_URI;
 if (!MONGO_URI) {
-  console.error("❌ MONGO_URI is not set in .env file!");
+  console.error("❌ MONGO_LOCAL is not set in .env file!");
   process.exit(1);
 }
 
