@@ -4,6 +4,7 @@ const Doctor = require("../models/DoctorSchema");
 const Users = require("../models/Users");
 const router = express.Router();
 const isLoggedIn = require("../middlewares/IsLoggedin");
+const loginDoctor = require("../middlewares/IsLoggedin");
 const mongoose = require("mongoose");
 
 //POST API

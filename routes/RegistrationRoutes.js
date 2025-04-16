@@ -4,6 +4,7 @@ const { loginUser } = require("../controllers/AuthController");
 const {logout} = require('../controllers/AuthController');
 const {ForgetPassword} = require('../controllers/AuthController');
 const {ResetPassword} = require('../controllers/AuthController');
+const {loginDoctor} = require('../controllers/AuthController');
 // Adjust path if needed
 const router = express.Router();
 
@@ -15,6 +16,7 @@ router.post("/login", loginUser);
 router.post('/logout', logout)
 router.post('/ForgetPassword',ForgetPassword);
 router.post('/ResetPassword',ResetPassword);
+router.post('/loginDoctor',loginDoctor);
 
 
 module.exports = router;

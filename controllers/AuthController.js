@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const userModel = require("../models/Users");
 const { genratetoken } = require("../utils/genratetoken");
+const Doctor = require("../models/DoctorSchema");
 
 module.exports.registerUser = async function (req, res) {
   try {
@@ -65,12 +66,67 @@ module.exports.loginUser = async function (req, res) {
         domain: "",
       });
 
-      res.json({ message: "You can login", token, role: user.role , name: user.userName });
+      res.json({
+        message: "You can login",
+        token,
+        role: user.role,
+        name: user.userName,
+      });
     } else {
       return res.send("email or password incorrect");
     }
   });
 };
+
+// Doctor Login--------------------------------->
+
+module.exports.loginDoctor = async (req, res) => {
+  try {
+    const { email, uniqueId } = req.body;
+    console.log("Request body:", req.body);
+    if (!email || !uniqueId) {
+      return res
+        .status(400)
+        .json({ message: "Email and Unique ID are required." });
+    }
+
+    // Check both email and uniqueId in one query
+    const doctor = await Doctor.findOne({
+      email: email.toLowerCase(),
+      uniqueId,
+    });
+
+    if (!doctor) {
+      return res
+        .status(401)
+        .json({ message: "Invalid credentials. Doctor not found." });
+    }
+
+    // Generate token
+    const token = genratetoken(doctor);
+
+    // Set cookie (optional depending on frontend)
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "Lax",
+    });
+
+    // Send response
+    res.status(200).json({
+      message: "Doctor login successful",
+      token,
+      doctor: {
+        name: doctor.name,
+        email: doctor.email,
+        uniqueId: doctor.uniqueId,
+      },
+    });
+  } catch (err) {
+    console.error("Login error:", err.message);
+    res.status(500).json({ message: "Internal server error" });
+  }
+}; 
 
 module.exports.ForgetPassword = async function (req, res) {
   try {
