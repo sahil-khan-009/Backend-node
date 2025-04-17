@@ -16,6 +16,7 @@ router.get("/allAppointments", async (req, res) => {
           isDeleted:0,
           deletedAt:0,
           deletedBy:0,
+          // appointmentDate:1
         }
       );
       res.status(200).json(appointments);
