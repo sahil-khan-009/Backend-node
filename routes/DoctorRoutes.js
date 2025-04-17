@@ -79,6 +79,9 @@ router.get('/Alldoctors', async (req, res) => {
 });
 
 
+
+
+
 // router.get("/Department", async (req, res) => {
 //     try {
 //       // Fetch only specific fields: name, department, and availability

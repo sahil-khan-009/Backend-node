@@ -14,6 +14,7 @@ const adminRoutes = require('./routes/AdminRoutes');
 const registerRoute = require('./routes/RegistrationRoutes');
 const Doctors = require('./routes/DoctorRoutes')
 const Department = require('./routes/DepartmentRoutes')
+const doctorDashboard = require('./routes/DoctorDashboard')
 const bodyParser = require("body-parser");
 const port = process.env.PORT || 4000;
 
@@ -73,6 +74,7 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/auth", registerRoute);
 app.use("/api/doctor",Doctors);
 app.use('/api/department',Department);
+app.use('/api/doctorDashboard',doctorDashboard);
 
 
 
