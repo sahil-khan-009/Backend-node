@@ -4,7 +4,10 @@ const router = express.Router();
 const Appointment = require("../models/Appointment");
 // const Department = require("../models/DepartmentSchema");
 
-router.get("/allAppointments", async (req, res) => {
+router.get("/allAppointments/:docID", async (req, res) => {
+  const {docID} = req.params
+
+  console.log("This is docID",docID)
     try {
       const appointments = await Appointment.find(
         { isDeleted: false }, // only fetch non-deleted appointments
