@@ -18,9 +18,7 @@ router.get("/allAppointments", isdoctorLoggedin, async (req, res) => {
       doctorId: doctorId, 
       isDeleted: { $ne: true } // Adjust based on your DB design
     })
-      .populate("patientId", "userName userEmail userPhone")
-      .populate("doctorId", "name email uniqueId")
-      .populate("departmentId", "departmentName departmentDescription")
+      .populate("doctorId", "name email uniqueId patientName appointmentDate description mode")
       .sort({ date: -1 });
 
     if (doctorAppointments.length === 0) {
