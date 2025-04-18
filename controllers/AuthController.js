@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
 const userModel = require("../models/Users");
-const { genratetoken } = require("../utils/genratetoken");
+const { generateUserToken, generateDoctorToken} = require("../utils/genratetoken");
 const Doctor = require("../models/DoctorSchema");
 
 module.exports.registerUser = async function (req, res) {
@@ -30,7 +30,7 @@ module.exports.registerUser = async function (req, res) {
     console.log("User created: ", newUser);
 
     // Generate and send token
-    const token = genratetoken(newUser);
+    const token = generateUserToken(newUser);
     res.cookie("token", token); // Set token as cookie
     res.status(201).send("User created successfully");
   } catch (err) {
@@ -55,7 +55,7 @@ module.exports.loginUser = async function (req, res) {
 
     console.log("result================", result);
     if (result) {
-      let token = genratetoken(user);
+      let token = generateUserToken(user);
       // res.json({  });
       // res.cookie("token", token);
       res.cookie("token", token, {
@@ -103,7 +103,7 @@ module.exports.loginDoctor = async (req, res) => {
     }
 
     // Generate token
-    const token = genratetoken(doctor);
+    const token = generateDoctorToken(doctor);
 
     // Set cookie (optional depending on frontend)
     res.cookie("token", token, {

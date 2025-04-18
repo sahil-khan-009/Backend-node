@@ -1,7 +1,11 @@
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
-const genratetoken = (user) => {
-  return jwt.sign({ userEmail: user.userEmail, id: user._id }, process.env.JWT_KEY); // Use JWT_KEY
+const generateUserToken = (user) => {
+  return jwt.sign({ userEmail: user.userEmail, id: user._id }, process.env.JWT_KEY);
 };
 
-module.exports.genratetoken = genratetoken;
+const generateDoctorToken = (doctor) => {
+  return jwt.sign({ email: doctor.email, id: doctor._id }, process.env.JWT_KEY);
+};
+
+module.exports = { generateUserToken, generateDoctorToken };

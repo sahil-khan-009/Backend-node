@@ -26,7 +26,7 @@ module.exports = async function (req, res, next) {
       // console.log("decoded--------------------",decoded)
   
       // Check if the user exists in the database
-      const doctor = await doctorModel.findOne({ email: decoded.email }).select("-password");
+      const doctor = await doctorModel.findOne({ email: decoded.email }).select("-uniqueId");
       if (!doctor) {
         return res.status(404).json({ message: "doctor not found. Please log in again." });
       }
