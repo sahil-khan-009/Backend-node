@@ -8,10 +8,12 @@ const isdoctorLoggedin = require("../middlewares/isDocLoggedin");
 
 router.get("/allAppointments/",isdoctorLoggedin, async (req, res) => {
     try {
-    console.log("This is doctor id", req.doctorId);
+    // console.log("This is doctor id", req.doctorId);
     
-    
-      res.status(200).json({hello});
+    const hello =" kaisan ba"
+      res.status(200).json({hello,
+        doctorObj: req.doctor
+      });
     } catch (err) {
       console.log("This is catch error", err.message);
       res.status(500).json({ error: err.message });

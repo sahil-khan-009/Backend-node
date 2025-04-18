@@ -36,7 +36,7 @@ module.exports = async function (req, res, next) {
       // Attach user to the request object
       req.doctor = doctor;
 
-      console.log("req.doctor--------------------",req.doctor);
+      console.log("req.doctor in isdocmiddleare--------------------",req.doctor);
   
       next(); // Proceed to the next middleware or route handler
     } catch (err) {
