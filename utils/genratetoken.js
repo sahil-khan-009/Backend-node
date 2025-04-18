@@ -5,6 +5,7 @@ const generateUserToken = (user) => {
 };
 
 const generateDoctorToken = (doctor) => {
+  console.log("This is doctor IN GENRATETOKEN---- token", doctor);
   return jwt.sign({ email: doctor.email, id: doctor._id }, process.env.JWT_KEY);
 };
 
