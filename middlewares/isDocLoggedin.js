@@ -8,6 +8,7 @@ const doctorModel = require("../models/DoctorSchema");
 //  ye middleware use tab karna hai jab production pe kaam karna ho yaani live pe
  
 module.exports = async function (req, res, next) {
+    console.log("this is  ideelware-------------------");
     try {
   
       // console.log("process.env.jwtKey",process.env.JWT_KEY);
@@ -32,7 +33,7 @@ module.exports = async function (req, res, next) {
   
       // Attach user to the request object
       req.doctor = doctor;
-      
+
       console.log("req.doctor--------------------",req.doctor);
   
       next(); // Proceed to the next middleware or route handler
