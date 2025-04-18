@@ -14,8 +14,9 @@ module.exports = async function (req, res, next) {
       // console.log("process.env.jwtKey",process.env.JWT_KEY);
       // Extract token from Authorization header
       const authHeader = req.headers.authorization;
+      console.log("this is authHeader-------------------",authHeader);
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        console.log("this is authHeader-------------------",authHeader);
+        console.log("this is if condition  authHeader-------------------",authHeader);
         return res.status(401).json({ message: "You need to log in first." });
       }
   
