@@ -120,6 +120,7 @@ module.exports.loginDoctor = async (req, res) => {
         name: doctor.name,
         email: doctor.email,
         uniqueId: doctor.uniqueId,
+        doctorMongoId : doctor._id
       },
     });
   } catch (err) {
