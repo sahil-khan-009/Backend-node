@@ -94,6 +94,7 @@ router.get("/totalAppointment", async (req, res) => {
           patientemail: 1,
           appointmentDate: 1,
           appointmentStatus: 1,
+          mode :1,
           registerUser: "$userDetails.userEmail", // ✅ Corrected projection
           doctorName: "$doctorDetails.name",
           doctorEmail: "$doctorDetails.email",
@@ -175,6 +176,10 @@ router.patch("/appointments/:id/:status", async (req, res) => {
         .status(400)
         .json({ error: "Please select value only 'confirm' or 'cancel'" });
     }
+
+// const appointment = Appointment.findById({id,
+
+// })
 
     // Update the appointment status
     const updateStatus = await Appointment.findByIdAndUpdate(
