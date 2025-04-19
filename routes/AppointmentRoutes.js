@@ -110,7 +110,7 @@ router.post("/appointments", isLoggedIn, async (req, res) => {
 // });
 
 // GET API ()
-router.get("/appointments", async (req, res) => {
+router.get("/appointments",isLoggedIn, async (req, res) => {
   try {
     const userId = req.user._id;
 
