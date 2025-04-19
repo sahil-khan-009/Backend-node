@@ -113,6 +113,12 @@ router.post("/appointments", isLoggedIn, async (req, res) => {
 router.get("/appointments", async (req, res) => {
   try {
     const userId = req.user._id;
+
+    if(!userId) {
+      return res.status(500).json({message:"userId is undefined"})
+    }
+
+
     console.log(
       "this is userId when get user appointment in appointmentstatus",
       userId
@@ -170,6 +176,9 @@ router.get("/appointments", async (req, res) => {
   }
 });
 
+
+
+
     router.get("/totalAppointments", async (req, res) => {
       try {
         const totalAppointments = await Appointment.find({});
@@ -184,8 +193,6 @@ router.get("/appointments", async (req, res) => {
     });
 
 
-//Get Api
-// ... (Your middleware)
 
 // Example route handler
 router.get("/profile", isLoggedIn, async (req, res) => {
