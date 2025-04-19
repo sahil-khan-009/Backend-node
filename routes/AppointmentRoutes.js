@@ -124,50 +124,57 @@ router.get("/appointments",isLoggedIn, async (req, res) => {
       userId
     );
 
-    const appointments = await Appointment.aggregate([
-      {
-        $match: {
-          isDeleted: false,
-          userId: new mongoose.Types.ObjectId(userId), // ✅ Matching logged-in user's appointments
-        },
-      },
-      { $sort: { appointmentDate: 1 } },
+    const appointments = await Appointment.find({
+      userId: userId, }).populate("doctorId", "name email uniqueId patientName appointmentDate description mode")
 
-      {
-        $lookup: {
-          from: "doctors",
-          localField: "doctorId",
-          foreignField: "_id",
-          as: "doctorDetails",
-        },
-      },
-      { $unwind: "$doctorDetails" },
+      if(appointments.length === 0) {
+        return res.status(404).json({message:"No appointments found"})
+      }
 
-      {
-        $lookup: {
-          from: "departments",
-          localField: "departmentId",
-          foreignField: "_id",
-          as: "departmentDetails",
-        },
-      },
-      { $unwind: "$departmentDetails" },
+    // const appointments = await Appointment.aggregate([
+    //   {
+    //     $match: {
+    //       isDeleted: false,
+    //       userId: new mongoose.Types.ObjectId(userId), // ✅ Matching logged-in user's appointments
+    //     },
+    //   },
+    //   { $sort: { appointmentDate: 1 } },
 
-      {
-        $project: {
-          userId: 1,
-          patientName: 1,
-          patientemail: 1,
-          appointmentDate: 1,
-          appointmentStatus: 1,
-          isDeleted: 1,
-          mode: 1,
-          doctorName: "$doctorDetails.name",
-          doctorEmail: "$doctorDetails.email",
-          department: "$departmentDetails.name",
-        },
-      },
-    ]);
+    //   {
+    //     $lookup: {
+    //       from: "doctors",
+    //       localField: "doctorId",
+    //       foreignField: "_id",
+    //       as: "doctorDetails",
+    //     },
+    //   },
+    //   { $unwind: "$doctorDetails" },
+
+    //   {
+    //     $lookup: {
+    //       from: "departments",
+    //       localField: "departmentId",
+    //       foreignField: "_id",
+    //       as: "departmentDetails",
+    //     },
+    //   },
+    //   { $unwind: "$departmentDetails" },
+
+    //   {
+    //     $project: {
+    //       userId: 1,
+    //       patientName: 1,
+    //       patientemail: 1,
+    //       appointmentDate: 1,
+    //       appointmentStatus: 1,
+    //       isDeleted: 1,
+    //       mode: 1,
+    //       doctorName: "$doctorDetails.name",
+    //       doctorEmail: "$doctorDetails.email",
+    //       department: "$departmentDetails.name",
+    //     },
+    //   },
+    // ]);
 
     res.status(200).json(appointments);
   } catch (error) {
