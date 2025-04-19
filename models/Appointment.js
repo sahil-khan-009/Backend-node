@@ -69,6 +69,12 @@ mode :{
   default: "offline",
 
 }
+,
+videoCallLink :{
+ type :String,
+  default : null,
+
+}
 
 });
 

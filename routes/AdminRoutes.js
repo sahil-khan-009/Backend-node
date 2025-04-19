@@ -165,44 +165,59 @@ router.delete("/appointments/:id", async (req, res) => {
 
 //updating status of pending requests
 
-router.patch("/appointments/:id/:status", async (req, res) => {
-  try {
-    const { id, status } = req.params;
-    // const {patientemail} = req.body;
 
-    // Validate the status
+router.patch("/appointments/:id/:status/:mode", async (req, res) => {
+  try {
+    const { id, status, mode } = req.params;
+
+    // Validate status
     if (status !== "confirm" && status !== "cancel") {
       return res
         .status(400)
         .json({ error: "Please select value only 'confirm' or 'cancel'" });
     }
 
-// const appointment = Appointment.findById({id,
+    // Generate Jitsi link if mode is online and status is confirmed
+    let videoCallLink = null;
+    if (mode === "online" && status === "confirm") {
+      const roomName = uuidv4();
+      videoCallLink = `https://meet.jit.si/${roomName}`;
+    }
 
-// })
+    // Update appointment
+    const updateFields = {
+      appointmentStatus: status === "confirm" ? "confirmed" : "cancelled",
+      mode,
+    };
 
-    // Update the appointment status
+    if (videoCallLink) {
+      updateFields.videoCallLink = videoCallLink;
+    }
+
     const updateStatus = await Appointment.findByIdAndUpdate(
       id,
-      { appointmentStatus: status === "confirm" ? "confirmed" : "cancelled" },
+      updateFields,
       { new: true }
     ).populate("doctorId", "name");
-    console.log("updateStatus======", updateStatus);
+
     if (!updateStatus) {
       return res.status(404).json({ error: "Appointment not found" });
     }
+
+    // Get doctor name
     const doctorName = updateStatus.doctorId
       ? updateStatus.doctorId.name
       : "Unknown Doctor";
 
-    // Send notification email
-    const email = `aestheticaesthetic236@gmail.com`; //updateStatus.patientemail; // Assuming you store the patient's email in the appointment schema
-    // console.log("email----",email)
+    // Prepare and send email
+    const email = updateStatus.patientemail;
     const message = `Dear ${
       updateStatus.patientName
     }, your appointment with Dr. ${doctorName} on ${new Date(
       updateStatus.appointmentDate
-    ).toDateString()} has been ${updateStatus.appointmentStatus}.`;
+    ).toDateString()} has been ${updateStatus.appointmentStatus}.${
+      videoCallLink ? `\nJoin via video: ${videoCallLink}` : "Mode is offline"
+    }`;
 
     await sendEmail(email, "Appointment Status Updated", message);
 
@@ -218,6 +233,78 @@ router.patch("/appointments/:id/:status", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+
+
+
+
+
+
+
+// router.patch("/appointments/:id/:status/:mode", async (req, res) => {
+//   try {
+//     const { id, status,mode } = req.params;
+//     // const {patientemail} = req.body;
+
+// if(mode === "online"){
+//   const RoomName = uuidv4();
+//   const updateStatus = await Appointment.findByIdAndUpdate({
+//     id,
+//     appointmentStatus: status === "confirm" ? "confirmed" : "cancelled",
+//     videoCallLink:
+//   })
+
+
+// }
+
+//     // Validate the status
+//     if (status !== "confirm" && status !== "cancel") {
+//       return res
+//         .status(400)
+//         .json({ error: "Please select value only 'confirm' or 'cancel'" });
+//     }
+
+// // const appointment = Appointment.findById({id,
+
+// // })
+
+//     // Update the appointment status
+//     const updateStatus = await Appointment.findByIdAndUpdate(
+//       id,
+//       { appointmentStatus: status === "confirm" ? "confirmed" : "cancelled" },
+//       { new: true }
+//     ).populate("doctorId", "name");
+//     console.log("updateStatus======", updateStatus);
+//     if (!updateStatus) {
+//       return res.status(404).json({ error: "Appointment not found" });
+//     }
+//     const doctorName = updateStatus.doctorId
+//       ? updateStatus.doctorId.name
+//       : "Unknown Doctor";
+
+//     // Send notification email
+//     const email = `aestheticaesthetic236@gmail.com`; //updateStatus.patientemail; // Assuming you store the patient's email in the appointment schema
+//     // console.log("email----",email)
+//     const message = `Dear ${
+//       updateStatus.patientName
+//     }, your appointment with Dr. ${doctorName} on ${new Date(
+//       updateStatus.appointmentDate
+//     ).toDateString()} has been ${updateStatus.appointmentStatus}.`;
+
+//     await sendEmail(email, "Appointment Status Updated", message);
+
+//     res.status(200).json({
+//       updateStatus,
+//       message:
+//         updateStatus.appointmentStatus === "confirmed"
+//           ? "Appointment Approved"
+//           : "Appointment Canceled",
+//     });
+//   } catch (err) {
+//     console.error("Error is ", err.message);
+//     res.status(500).json({ error: err.message });
+//   }
+// });
 
 
 // <-----------------All Get api Department----------------->
