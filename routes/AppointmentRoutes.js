@@ -12,7 +12,7 @@ router.post("/appointments", isLoggedIn, async (req, res) => {
   try {
     console.log("req.body================", req.body);
     const { appointmentDate, doctorId, mode } = req.body;
- 
+
     if (mode === "") {
       return res
         .status(400)
@@ -112,24 +112,34 @@ router.post("/appointments", isLoggedIn, async (req, res) => {
 // GET API ()
 router.get("/appointments", async (req, res) => {
   try {
-    const appointments = await Appointment.aggregate([
-      { $sort: { appointmentDate: 1 } }, // ✅ Corrected $sort syntax
+    const userId = req.user._id;
+    console.log(
+      "this is userId when get user appointment in appointmentstatus",
+      userId
+    );
 
-      { $match: { isDeleted: false } }, // ✅ Ensure only non-deleted appointments
+    const appointments = await Appointment.aggregate([
+      {
+        $match: {
+          isDeleted: false,
+          userId: new mongoose.Types.ObjectId(userId), // ✅ Matching logged-in user's appointments
+        },
+      },
+      { $sort: { appointmentDate: 1 } },
 
       {
         $lookup: {
-          from: "doctors", // ✅ Ensure this matches your DB collection name
+          from: "doctors",
           localField: "doctorId",
           foreignField: "_id",
           as: "doctorDetails",
         },
       },
-      { $unwind: "$doctorDetails" }, // ✅ Convert array to object
+      { $unwind: "$doctorDetails" },
 
       {
         $lookup: {
-          from: "departments", // ✅ Ensure this matches your DB collection name
+          from: "departments",
           localField: "departmentId",
           foreignField: "_id",
           as: "departmentDetails",
@@ -146,12 +156,19 @@ router.get("/appointments", async (req, res) => {
           appointmentStatus: 1,
           isDeleted: 1,
           mode: 1,
-          doctorName: "$doctorDetails.name", // ✅ Fetching doctor's name
-          doctorEmail: "$doctorDetails.email", // ✅ Fetching doctor's email
-          department: "$departmentDetails.name", // ✅ Fetching department name
+          doctorName: "$doctorDetails.name",
+          doctorEmail: "$doctorDetails.email",
+          department: "$departmentDetails.name",
         },
       },
     ]);
+
+    res.status(200).json(appointments);
+  } catch (error) {
+    console.error("Error fetching appointments:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
     router.get("/totalAppointments", async (req, res) => {
       try {

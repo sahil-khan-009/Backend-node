@@ -215,8 +215,9 @@ router.patch("/appointments/:id/:status/:mode", async (req, res) => {
       updateStatus.patientName
     }, your appointment with Dr. ${doctorName} on ${new Date(
       updateStatus.appointmentDate
+      
     ).toDateString()} has been ${updateStatus.appointmentStatus}.${
-      videoCallLink ? `\nJoin via video: ${videoCallLink}` : "Mode is offline"
+      videoCallLink ? `\n ( Please Check your appointment dashboard for appintment timing )  Or Join via video: ${videoCallLink}` : "Mode is offline ( Please Check your appointment dashboard) "
     }`;
 
     await sendEmail(email, "Appointment Status Updated", message);
