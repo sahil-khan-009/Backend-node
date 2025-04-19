@@ -149,7 +149,7 @@ router.get("/appointments", async (req, res) => {
 
       {
         $project: {
-          _id: 1,
+          userId: 1,
           patientName: 1,
           patientemail: 1,
           appointmentDate: 1,
