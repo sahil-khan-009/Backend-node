@@ -183,15 +183,6 @@ router.get("/appointments", async (req, res) => {
       }
     });
 
-    return res.status(200).json(appointments);
-  } catch (err) {
-    console.log("this is catch error", err.message);
-    return res.status(500).json({
-      Error: "Internal server error",
-      err: err.message,
-    });
-  }
-});
 
 //Get Api
 // ... (Your middleware)
