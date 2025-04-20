@@ -123,9 +123,14 @@ router.get("/appointments",isLoggedIn, async (req, res) => {
       "this is userId when get user appointment in appointmentstatus",
       userId
     );
-
     const appointments = await Appointment.find({
-      userId: userId, }).populate("doctorId", "name email uniqueId patientName appointmentDate description mode")
+      userId,
+      isDeleted: false
+    })
+    .populate("doctorId", "name email uniqueId patientName appointmentDate description mode")
+    .populate("departmentId", "name")
+    .lean();
+    
 
       if(appointments.length === 0) {
         return res.status(404).json({message:"No appointments found"})
@@ -176,7 +181,11 @@ router.get("/appointments",isLoggedIn, async (req, res) => {
     //   },
     // ]);
 
-    res.status(200).json(appointments);
+    return res.status(200).json({
+      success: true,
+      count: appointments.length,
+      data: appointments,
+    });
   } catch (error) {
     console.error("Error fetching appointments:", error);
     res.status(500).json({ message: "Server error" });

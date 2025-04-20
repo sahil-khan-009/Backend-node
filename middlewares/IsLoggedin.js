@@ -56,7 +56,7 @@ module.exports = async function (req, res, next) {
 
     // Attach user to the request object
     req.user = user;
-    console.log("req.user--------------------",req.user);
+    console.log("req.user--------------------  req.user = user;----",req.user);
 
     next(); // Proceed to the next middleware or route handler
   } catch (err) {
