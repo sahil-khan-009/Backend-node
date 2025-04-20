@@ -110,14 +110,13 @@ router.post("/appointments", isLoggedIn, async (req, res) => {
 // });
 
 // GET API ()
-router.get("/appointments",isLoggedIn, async (req, res) => {
+router.get("/appointments", isLoggedIn, async (req, res) => {
   try {
     const userId = req.user._id;
 
-    if(!userId) {
-      return res.status(500).json({message:"userId is undefined"})
+    if (!userId) {
+      return res.status(500).json({ message: "userId is undefined" });
     }
-
 
     console.log(
       "this is userId when get user appointment in appointmentstatus",
@@ -125,16 +124,18 @@ router.get("/appointments",isLoggedIn, async (req, res) => {
     );
     const appointments = await Appointment.find({
       userId,
-      isDeleted: false
+      isDeleted: false,
     })
-    .populate("doctorId", "name email uniqueId patientName appointmentDate description mode")
-    .populate("departmentId", "name")
-    .lean();
-    
+      .populate(
+        "doctorId",
+        "name email uniqueId patientName appointmentDate description mode"
+      )
+      .populate("departmentId", "name")
+      .lean();
 
-      if(appointments.length === 0) {
-        return res.status(404).json({message:"No appointments found"})
-      }
+    if (appointments.length === 0) {
+      return res.status(404).json({ message: "No appointments found" });
+    }
 
     // const appointments = await Appointment.aggregate([
     //   {
@@ -181,34 +182,25 @@ router.get("/appointments",isLoggedIn, async (req, res) => {
     //   },
     // ]);
 
-    return res.status(200).json({
-      success: true,
-      count: appointments.length,
-      data: appointments,
-    });
+    return res.status(200).json({ appointments });
   } catch (error) {
     console.error("Error fetching appointments:", error);
     res.status(500).json({ message: "Server error" });
   }
 });
 
+router.get("/totalAppointments", async (req, res) => {
+  try {
+    const totalAppointments = await Appointment.find({});
 
-
-
-    router.get("/totalAppointments", async (req, res) => {
-      try {
-        const totalAppointments = await Appointment.find({});
-
-        res.status(200).json({
-          totalAppointments,
-        });
-      } catch (err) {
-        console.error("Error fetching total appointments:", err.message);
-        return res.status(500).json({ error: err.message });
-      }
+    res.status(200).json({
+      totalAppointments,
     });
-
-
+  } catch (err) {
+    console.error("Error fetching total appointments:", err.message);
+    return res.status(500).json({ error: err.message });
+  }
+});
 
 // Example route handler
 router.get("/profile", isLoggedIn, async (req, res) => {
