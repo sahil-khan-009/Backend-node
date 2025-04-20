@@ -98,6 +98,8 @@ router.get("/totalAppointment", async (req, res) => {
           registerUser: "$userDetails.userEmail", // ✅ Corrected projection
           doctorName: "$doctorDetails.name",
           doctorEmail: "$doctorDetails.email",
+          doctorStartTime: "$doctorDetails.timings.start",
+          doctorEndTime: "$doctorDetails.timings.end",
           department: "$departmentDetails.name",
         },
       },
