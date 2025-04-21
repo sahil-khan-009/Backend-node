@@ -171,6 +171,12 @@ router.delete("/appointments/:id", async (req, res) => {
 router.patch("/appointments/:id/:status/:mode", async (req, res) => {
   try {
     const { id, status, mode } = req.params;
+    const { timeSlot } = req.body;
+     
+// Example (Node.js + Express):
+if (!req.body.timeSlot) {
+  return res.status(400).json({ message: "Time slot is required." });
+}
 
     // Validate status
     if (status !== "confirm" && status !== "cancel") {
@@ -218,7 +224,7 @@ router.patch("/appointments/:id/:status/:mode", async (req, res) => {
     }, your appointment with Dr. ${doctorName} on ${new Date(
       updateStatus.appointmentDate
       
-    ).toDateString()} has been ${updateStatus.appointmentStatus}.${
+    ).toDateString()} has this is time slot ----- ${timeSlot} ----- been ${updateStatus.appointmentStatus}.${
       videoCallLink ? `\n ( Please Check your appointment dashboard for appintment timing )  Or Join via video: ${videoCallLink}` : "Mode is offline ( Please Check your appointment dashboard) "
     }`;
 

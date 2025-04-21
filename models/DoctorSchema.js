@@ -15,7 +15,7 @@ const DoctorSchema = new mongoose.Schema({
   },
   phone: {
     type: String,
-    trim: true,
+    trim: true, 
   },
   uniqueId:{
     type:String,

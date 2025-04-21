@@ -74,9 +74,16 @@ videoCallLink :{
  type :String,
   default : null,
 
+},
+
+timeSlot:{
+  type:String,
+  default: null,
+
 }
 
 });
+
 
 
 const Appointment = mongoose.model("Appointment", AppointmentSchema);
