@@ -82,7 +82,7 @@ router.get('/Alldoctors', async (req, res) => {
 
 router.patch('/video/appointments/status/:id', async (req, res) => {
   console.log("Route hit hua bhai khus ho jaaaaaaaaaaaa")
-  res.send("Hello from the video appointment status route");
+  res.send("Hello from the video appointment status r0oute");
 
 })
 
