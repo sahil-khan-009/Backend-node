@@ -7,7 +7,7 @@ const isLoggedIn = require("../middlewares/IsLoggedin");
 const loginDoctor = require("../middlewares/IsLoggedin");
 const mongoose = require("mongoose");
 
-//POST API
+//POST API 
 router.post("/appointments", isLoggedIn, async (req, res) => {
   try {
     console.log("req.body================", req.body);
