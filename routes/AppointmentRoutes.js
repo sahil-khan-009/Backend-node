@@ -7,7 +7,7 @@ const isLoggedIn = require("../middlewares/IsLoggedin");
 const loginDoctor = require("../middlewares/IsLoggedin");
 const mongoose = require("mongoose");
 
-//POST API 
+//POST API
 router.post("/appointments", isLoggedIn, async (req, res) => {
   try {
     console.log("req.body================", req.body);
@@ -110,6 +110,40 @@ router.post("/appointments", isLoggedIn, async (req, res) => {
 // });
 
 // GET API ()
+// dashborad user dashborad api
+router.get("/AlluserAppointment", isLoggedIn, async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    if (!userId) {
+      return res.status(500).json({ message: "userId is undefined" });
+    }
+
+    console.log(
+      "this is userId when get user appointment in appointmentstatus",
+      userId
+    );
+    const appointments = await Appointment.find({
+      userId,
+    })
+      .populate(
+        "doctorId",
+        "name email uniqueId patientName appointmentDate description mode"
+      )
+      .populate("departmentId", "name")
+      .lean();
+
+    if (appointments.length === 0) {
+      return res.status(404).json({ message: "No appointments found" });
+    }
+
+    return res.status(200).json({ appointments });
+  } catch (err) {
+    console.error("Error fetching appointments:", err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 router.get("/appointments", isLoggedIn, async (req, res) => {
   try {
     const userId = req.user._id;
