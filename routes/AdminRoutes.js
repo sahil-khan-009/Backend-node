@@ -8,7 +8,7 @@ const sendEmail = require("../utils/AppointmentMail");
 const userModel = require("../models/Users");
 const { v4: uuidv4 } = require('uuid');
 const stripe = require("stripe")("sk_test_51R7YKDDRfbAZZF8HOLYEtXDV8NmoyvhtVYjSs3coVuCOSmKOsKERkdL0s5wWohRyhHdkN03Y54fM47Cu1hr5qeJo00s8yRHEoY");
-
+import { createDailyRoom } from "../utils/daily"; // Import the function to create a room
 
 // Admin route to fetch appointments
 
@@ -168,31 +168,28 @@ router.delete("/appointments/:id", async (req, res) => {
 //updating status of pending requests
 
 
+
 router.patch("/appointments/:id/:status/:mode", async (req, res) => {
   try {
     const { id, status, mode } = req.params;
     const { timeSlot } = req.body;
-     
-// Example (Node.js + Express):
-if (!req.body.timeSlot) {
-  return res.status(400).json({ message: "Time slot is required." });
-}
 
-    // Validate status
+    if (!timeSlot) {
+      return res.status(400).json({ message: "Time slot is required." });
+    }
+
     if (status !== "confirm" && status !== "cancel") {
       return res
         .status(400)
         .json({ error: "Please select value only 'confirm' or 'cancel'" });
     }
 
-    // Generate Jitsi link if mode is online and status is confirmed
     let videoCallLink = null;
+
     if (mode === "online" && status === "confirm") {
-      const roomName = uuidv4();
-      videoCallLink = `https://meet.jit.si/${roomName}`;
+      videoCallLink = await createDailyRoom();
     }
 
-    // Update appointment
     const updateFields = {
       appointmentStatus: status === "confirm" ? "confirmed" : "cancelled",
       mode,
@@ -212,20 +209,19 @@ if (!req.body.timeSlot) {
       return res.status(404).json({ error: "Appointment not found" });
     }
 
-    // Get doctor name
     const doctorName = updateStatus.doctorId
       ? updateStatus.doctorId.name
       : "Unknown Doctor";
 
-    // Prepare and send email
     const email = updateStatus.patientemail;
-    const message = `Dear ${
-      updateStatus.patientName
-    }, your appointment with Dr. ${doctorName} on ${new Date(
+    const message = `Dear ${updateStatus.patientName}, your appointment with Dr. ${doctorName} on ${new Date(
       updateStatus.appointmentDate
-      
-    ).toDateString()} has this is time slot --- ${timeSlot} ----- been ${updateStatus.appointmentStatus}.${
-      videoCallLink ? `\n ( Please Check your appointment dashboard for appintment timing )  Or Join via video: ${videoCallLink}` : "Mode is offline ( Please Check your appointment dashboard) "
+    ).toDateString()} at time slot: ${timeSlot} has been ${
+      updateStatus.appointmentStatus
+    }.${
+      videoCallLink
+        ? `\nJoin via video: ${videoCallLink} (Also available in your dashboard)`
+        : " (Please check your dashboard for appointment details)"
     }`;
 
     await sendEmail(email, "Appointment Status Updated", message);
@@ -238,10 +234,88 @@ if (!req.body.timeSlot) {
           : "Appointment Canceled",
     });
   } catch (err) {
-    console.error("Error is ", err.message);
+    console.error("Error:", err.message);
     res.status(500).json({ error: err.message });
   }
 });
+
+
+
+
+// router.patch("/appointments/:id/:status/:mode", async (req, res) => {
+//   try {
+//     const { id, status, mode } = req.params;
+//     const { timeSlot } = req.body;
+     
+// // Example (Node.js + Express):
+// if (!req.body.timeSlot) {
+//   return res.status(400).json({ message: "Time slot is required." });
+// }
+
+//     // Validate status
+//     if (status !== "confirm" && status !== "cancel") {
+//       return res
+//         .status(400)
+//         .json({ error: "Please select value only 'confirm' or 'cancel'" });
+//     }
+
+//     // Generate Jitsi link if mode is online and status is confirmed
+//     let videoCallLink = null;
+//     if (mode === "online" && status === "confirm") {
+//       const roomName = uuidv4();
+//       videoCallLink = `https://meet.jit.si/${roomName}`;
+//     }
+
+//     // Update appointment
+//     const updateFields = {
+//       appointmentStatus: status === "confirm" ? "confirmed" : "cancelled",
+//       mode,
+//     };
+
+//     if (videoCallLink) {
+//       updateFields.videoCallLink = videoCallLink;
+//     }
+
+//     const updateStatus = await Appointment.findByIdAndUpdate(
+//       id,
+//       updateFields,
+//       { new: true }
+//     ).populate("doctorId", "name");
+
+//     if (!updateStatus) {
+//       return res.status(404).json({ error: "Appointment not found" });
+//     }
+
+//     // Get doctor name
+//     const doctorName = updateStatus.doctorId
+//       ? updateStatus.doctorId.name
+//       : "Unknown Doctor";
+
+//     // Prepare and send email
+//     const email = updateStatus.patientemail;
+//     const message = `Dear ${
+//       updateStatus.patientName
+//     }, your appointment with Dr. ${doctorName} on ${new Date(
+//       updateStatus.appointmentDate
+      
+//     ).toDateString()} has this is time slot --- ${timeSlot} ----- been ${updateStatus.appointmentStatus}.${
+//       videoCallLink ? `\n ( Please Check your appointment dashboard for appintment timing )  Or Join via video: ${videoCallLink}` : "Mode is offline ( Please Check your appointment dashboard) "
+//     }`;
+
+//     await sendEmail(email, "Appointment Status Updated", message);
+
+//     res.status(200).json({
+//       updateStatus,
+//       message:
+//         updateStatus.appointmentStatus === "confirmed"
+//           ? "Appointment Approved"
+//           : "Appointment Canceled",
+//     });
+//   } catch (err) {
+//     console.error("Error is ", err.message);
+//     res.status(500).json({ error: err.message });
+//   }
+// });
 
 
 
