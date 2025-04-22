@@ -224,7 +224,7 @@ if (!req.body.timeSlot) {
     }, your appointment with Dr. ${doctorName} on ${new Date(
       updateStatus.appointmentDate
       
-    ).toDateString()} has this is time slot ----- ${timeSlot} ----- been ${updateStatus.appointmentStatus}.${
+    ).toDateString()} has this is time slot --- ${timeSlot} ----- been ${updateStatus.appointmentStatus}.${
       videoCallLink ? `\n ( Please Check your appointment dashboard for appintment timing )  Or Join via video: ${videoCallLink}` : "Mode is offline ( Please Check your appointment dashboard) "
     }`;
 
