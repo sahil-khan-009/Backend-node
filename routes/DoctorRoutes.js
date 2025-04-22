@@ -80,7 +80,10 @@ router.get('/Alldoctors', async (req, res) => {
 
 
 
+router.patch('/video/appointments/status/:id', async (req, res) => {
+  console.log("Route hit hua bhai khus ho jaaaaaaaaaaaa")
 
+})
 
 // router.get("/Department", async (req, res) => {
 //     try {
