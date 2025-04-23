@@ -57,7 +57,7 @@ router.post(
         {
           $set: {
             report: filePath, // Store file path in DB
-            doctorId: doctorId,
+         
           },
         },
         { new: true }
