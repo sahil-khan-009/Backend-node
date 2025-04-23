@@ -80,7 +80,13 @@ timeSlot:{
   type:String,
   default: null,
 
+},
+
+report :{
+  type:String,
+  default : null,
 }
+
 
 });
 
