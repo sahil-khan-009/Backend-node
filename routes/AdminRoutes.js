@@ -301,7 +301,7 @@ if (!req.body.timeSlot) {
     ${
       videoCallLink
         ? `As the appointment is scheduled in online mode, you can join the video consultation using the following link:\n\n${videoCallLink}\n\nPlease also check your appointment dashboard for timing and additional details.`
-        : ` please visit the clinic at the scheduled time. You can check your appointment dashboard for more information.`
+        : ` Please visit the clinic at the scheduled time. You can check your appointment dashboard for more information.`
     }
     
     Thank you for choosing our services.
