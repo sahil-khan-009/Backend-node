@@ -5,7 +5,7 @@ const router = express.Router();
 const Appointment = require("../models/Appointment");
 // const Department = require("../models/DepartmentSchema");
 const isdoctorLoggedin = require("../middlewares/isDocLoggedin");
-const Appointment = require("../models/Appointment");
+// const Appointment = require("../models/Appointment");
 const upload = require("../middlewares/MulterConfig");
 // const isDocLoggedin = require("../middlewares/isDocLoggedin");
 
