@@ -294,14 +294,21 @@ if (!req.body.timeSlot) {
 
     // Prepare and send email
     const email = updateStatus.patientemail;
-    const message = `Dear ${
-      updateStatus.patientName
-    }, your appointment with Dr. ${doctorName} on ${new Date(
-      updateStatus.appointmentDate
-      
-    ).toDateString()} has this is time slot --- ${timeSlot} ----- been ${updateStatus.appointmentStatus}.${
-      videoCallLink ? `\n ( Please Check your appointment dashboard for appintment timing )  Or Join via video: ${videoCallLink}` : "Mode is offline ( Please Check your appointment dashboard) "
-    }`;
+    const message = `Dear ${updateStatus.patientName},
+
+    Your appointment with Dr. ${doctorName} on ${new Date(updateStatus.appointmentDate).toDateString()} at ${timeSlot} has been ${updateStatus.appointmentStatus}.
+    
+    ${
+      videoCallLink
+        ? `As the appointment is scheduled in online mode, you can join the video consultation using the following link:\n\n${videoCallLink}\n\nPlease also check your appointment dashboard for timing and additional details.`
+        : `Since this is an offline appointment, please visit the clinic at the scheduled time. You can check your appointment dashboard for more information.`
+    }
+    
+    Thank you for choosing our services.
+    
+    Best regards,  
+    [Your Clinic Name / Appointment Team]
+    `;
 
     await sendEmail(email, "Appointment Status Updated", message);
 
