@@ -35,8 +35,8 @@ module.exports = async function (req, res, next) {
     // Extract token from Authorization header
     const authHeader = req.headers.authorization;
     console.log("ye hai islogged in middleware")
-    console.log("this is authHeader-------------------",authHeader);
-    console.log("this is authHeader-------------------",authHeader);
+    // console.log("this is authHeader-------------------",authHeader);
+    // console.log("this is authHeader-------------------",authHeader);
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res.status(401).json({ message: "You need to log in first." });
     }
@@ -56,7 +56,7 @@ module.exports = async function (req, res, next) {
 
     // Attach user to the request object
     req.user = user;
-    console.log("req.user--------------------  req.user = user;----",req.user);
+    // console.log("req.user--------------------  req.user = user;----",req.user);
 
     next(); // Proceed to the next middleware or route handler
   } catch (err) {

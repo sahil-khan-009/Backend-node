@@ -27,7 +27,7 @@ module.exports.registerUser = async function (req, res) {
       userPassword: hashedPassword, // Store hashed password
     });
 
-    console.log("User created: ", newUser);
+    // console.log("User created: ", newUser);
 
     // Generate and send token
     const token = generateUserToken(newUser);
@@ -43,11 +43,11 @@ module.exports.registerUser = async function (req, res) {
 
 module.exports.loginUser = async function (req, res) {
   let { userEmail, userPassword } = req.body;
-  console.log("This is JWT key ------", process.env.JWT_KEY);
+  // console.log("This is JWT key ------", process.env.JWT_KEY);
 
   let user = await userModel.findOne({ userEmail });
 
-  console.log("This is user------------------------------------------- ", user);
+  // console.log("This is user------------------------------------------- ", user);
   if (!user) return res.send("user not found");
 
   bcrypt.compare(userPassword, user.userPassword, function (err, result) {
@@ -83,7 +83,7 @@ module.exports.loginUser = async function (req, res) {
 module.exports.loginDoctor = async (req, res) => {
   try {
     const { email, uniqueId } = req.body;
-    console.log("Request body:", req.body);
+    // console.log("Request body:", req.body);
     if (!email || !uniqueId) {
       return res
         .status(400)
@@ -132,7 +132,7 @@ module.exports.loginDoctor = async (req, res) => {
 module.exports.ForgetPassword = async function (req, res) {
   try {
     let { userEmail } = req.body;
-    console.log("This is req.body-------", req.body);
+    // console.log("This is req.body-------", req.body);
 
     let emailUser = userModel.findOne({ userEmail });
     if (!emailUser) {
@@ -153,7 +153,7 @@ module.exports.ForgetPassword = async function (req, res) {
 module.exports.ResetPassword = async function (req, res) {
   try {
     const { userEmail, password, newpassword } = req.body;
-    console.log("password newpassword----------------", req.body);
+    // console.log("password newpassword----------------", req.body);
     if (!userEmail || !password || !newpassword) {
       return res.status(400).send("All fields are required.");
     }

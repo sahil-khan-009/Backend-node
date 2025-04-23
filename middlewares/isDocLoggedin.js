@@ -8,15 +8,15 @@ const doctorModel = require("../models/DoctorSchema");
 //  ye middleware use tab karna hai jab production pe kaam karna ho yaani live pe
  
 module.exports = async function (req, res, next) {
-    console.log("this is  mideelware-------------------");
+    // console.log("this is  mideelware-------------------");
     try {
   
       // console.log("process.env.jwtKey",process.env.JWT_KEY);
       // Extract token from Authorization header
       const authHeader = req.headers.authorization;
-      console.log("this is authHeader-------------------",authHeader);
+      // console.log("this is authHeader-------------------",authHeader);
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        console.log("this is if condition  authHeader-------------------",authHeader);
+        // console.log("this is if condition  authHeader-------------------",authHeader);
         return res.status(401).json({ message: "You need to log in first." });
       }
   
@@ -25,7 +25,7 @@ module.exports = async function (req, res, next) {
   
       // Verify the token
       const decoded = jwt.verify(token, process.env.JWT_KEY);
-      console.log("decoded--------------------",decoded)
+      // console.log("decoded--------------------",decoded)
   
       // Check if the user exists in the database
       const doctor = await doctorModel.findOne({ email: decoded.email }).select("-uniqueId");
@@ -36,7 +36,7 @@ module.exports = async function (req, res, next) {
       // Attach user to the request object
       req.doctor = doctor;
 
-      console.log("req.doctor in isdocmiddleare--------------------",req.doctor);
+      // console.log("req.doctor in isdocmiddleare--------------------",req.doctor);
   
       next(); // Proceed to the next middleware or route handler
     } catch (err) {
