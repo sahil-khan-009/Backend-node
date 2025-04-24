@@ -5,9 +5,12 @@ const fs = require('fs');
 // Go one level up from middlewares → reach root → then uploads/reports
 const uploadPath = path.join(__dirname, '..', 'uploads', 'reports');
 
+
+console.log("Upload Path------------------:", uploadPath);
 // If folder doesn't exist, create it
 if (!fs.existsSync(uploadPath)) {
   fs.mkdirSync(uploadPath, { recursive: true });
+  console.log("Created the uploads/reports folder!");
 }
 
 const storage = multer.diskStorage({

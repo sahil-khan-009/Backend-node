@@ -44,41 +44,91 @@ router.get("/allAppointments", isdoctorLoggedin, async (req, res) => {
 
 // Patient resport
 
-router.post("/UploadUserReport/:appointmentId",isdoctorLoggedin,upload.single("report"), async (req, res) => {
+
+
+router.post("/UploadUserReport/:appointmentId", isdoctorLoggedin, upload.single("report"), (err, req, res, next) => {
+  if (err) {
+    console.error("Multer upload error:", err);
+    return res.status(500).send("Error during file upload.");
+  }
+  // Continue with the normal flow after handling errors
+  next();
+}, async (req, res) => {
   console.log("✅ File Received++++++++++++++++:", req.file);
 
-    try {
-      console.log("✅ File Received--------------------:", req.file);
+  try {
+    console.log("✅ File Received--------------------:", req.file);
 
-      const { appointmentId } = req.params;
-      const doctorId = req.doctor._id;
-      // const filePath = req.file.path; // this contains the full path to uploaded file
-      // const relativePath = `uploads/reports/${req.file.filename}`;
-      const filePath = `uploads/reports/${req.file.filename}`;
+    const { appointmentId } = req.params;
+    const doctorId = req.doctor._id;
+    const filePath = `uploads/reports/${req.file.filename}`;
 
-      const updatedAppointment = await Appointment.findByIdAndUpdate(
-        appointmentId,
-        {
-          $set: {
-            report: filePath, // Store file path in DB
-          },
+    const updatedAppointment = await Appointment.findByIdAndUpdate(
+      appointmentId,
+      {
+        $set: {
+          report: filePath, // Store file path in DB
         },
-        { new: true }
-      );
+      },
+      { new: true }
+    );
 
-      if (!updatedAppointment) {
-        return res.status(404).json({ message: "Appointment not found" });
-      }
-
-      res.status(200).json({
-        message: "Report uploaded successfully",
-        updatedAppointment,
-      });
-    } catch (err) {
-      console.error("Upload error:", err);
-      res.status(500).json({ message: "Something went wrong" });
+    if (!updatedAppointment) {
+      return res.status(404).json({ message: "Appointment not found" });
     }
+
+    res.status(200).json({
+      message: "Report uploaded successfully",
+      updatedAppointment,
+    });
+  } catch (err) {
+    console.error("Upload error:", err);
+    res.status(500).json({ message: "Something went wrong" });
   }
-);
+});
+
+
+
+
+
+
+
+// router.post("/UploadUserReport/:appointmentId",isdoctorLoggedin,upload.single("report"), async (req, res) => {
+//   console.log("✅ File Received++++++++++++++++:", req.file);
+
+//     try {
+//       console.log("✅ File Received--------------------:", req.file);
+
+//       const { appointmentId } = req.params;
+//       const doctorId = req.doctor._id;
+//       // const filePath = req.file.path; // this contains the full path to uploaded file
+//       // const relativePath = `uploads/reports/${req.file.filename}`;
+//       const filePath = `uploads/reports/${req.file.filename}`;
+
+//       const updatedAppointment = await Appointment.findByIdAndUpdate(
+//         appointmentId,
+//         {
+//           $set: {
+//             report: filePath, // Store file path in DB
+//           },
+//         },
+//         { new: true }
+//       );
+
+//       if (!updatedAppointment) {
+//         return res.status(404).json({ message: "Appointment not found" });
+//       }
+
+//       res.status(200).json({
+//         message: "Report uploaded successfully",
+//         updatedAppointment,
+//       });
+//     } catch (err) {
+//       console.error("Upload error:", err);
+//       res.status(500).json({ message: "Something went wrong" });
+//     }
+//   }
+// );
+
 
 module.exports = router;
