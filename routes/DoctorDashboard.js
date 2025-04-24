@@ -44,12 +44,12 @@ router.get("/allAppointments", isdoctorLoggedin, async (req, res) => {
 
 // Patient resport
 
-router.post(
-  "/UploadUserReport/:appointmentId",
-  isdoctorLoggedin,
-  upload.single("report"), // 👈 this handles one file with field name "report"
-  async (req, res) => {
+router.post("/UploadUserReport/:appointmentId",isdoctorLoggedin,upload.single("report"), async (req, res) => {
+  console.log("✅ File Received++++++++++++++++:", req.file);
+
     try {
+      console.log("✅ File Received--------------------:", req.file);
+
       const { appointmentId } = req.params;
       const doctorId = req.doctor._id;
       // const filePath = req.file.path; // this contains the full path to uploaded file

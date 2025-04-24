@@ -7,9 +7,9 @@ const uploadPath = path.join(__dirname, 'uploads', 'reports');
 
 
 
-// if (!fs.existsSync(uploadPath)) {
-//   fs.mkdirSync(uploadPath, { recursive: true });
-// }
+if (!fs.existsSync(uploadPath)) {
+  fs.mkdirSync(uploadPath, { recursive: true });
+}
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -38,7 +38,7 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 } // 5MB file limit
+  // limits: { fileSize: 5 * 1024 * 1024 } // 5MB file limit
 });
 
 module.exports = upload;
