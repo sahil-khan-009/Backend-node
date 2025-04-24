@@ -20,6 +20,7 @@ router.get("/allAppointments", isdoctorLoggedin, async (req, res) => {
     const doctorAppointments = await Appointment.find({
       doctorId: doctorId,
       isDeleted: { $ne: true }, // Adjust based on your DB design
+      appointmentStatus: {$ne : "pending"}  , // Exclude pending appointments
     })
       .populate(
         "doctorId",
