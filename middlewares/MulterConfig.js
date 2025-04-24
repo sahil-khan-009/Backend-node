@@ -3,7 +3,8 @@ const path = require('path');
 
 // Set up storage
 const fs = require('fs');
-const uploadPath = path.join(__dirname, '..', 'uploads', 'reports');
+const uploadPath = path.join(__dirname, 'uploads', 'reports');
+
 
 
 if (!fs.existsSync(uploadPath)) {
