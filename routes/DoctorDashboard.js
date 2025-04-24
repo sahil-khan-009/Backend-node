@@ -20,7 +20,7 @@ router.get("/allAppointments", isdoctorLoggedin, async (req, res) => {
     const doctorAppointments = await Appointment.find({
       doctorId: doctorId,
       isDeleted: { $ne: true }, // Adjust based on your DB design
-      appointmentStatus: {$ne : "pending"}  , // Exclude pending appointments
+      appointmentStatus: { $ne: "pending" }, // Exclude pending appointments
     })
       .populate(
         "doctorId",
@@ -43,6 +43,7 @@ router.get("/allAppointments", isdoctorLoggedin, async (req, res) => {
 });
 
 // Patient resport
+
 router.post(
   "/UploadUserReport/:appointmentId",
   isdoctorLoggedin,
@@ -51,14 +52,14 @@ router.post(
     try {
       const { appointmentId } = req.params;
       const doctorId = req.doctor._id;
-      const filePath = req.file.path; // this contains the full path to uploaded file
+      // const filePath = req.file.path; // this contains the full path to uploaded file
+      const relativePath = `uploads/reports/${req.file.filename}`;
 
       const updatedAppointment = await Appointment.findByIdAndUpdate(
         appointmentId,
         {
           $set: {
-            report: filePath, // Store file path in DB
-         
+            report: relativePath, // Store file path in DB
           },
         },
         { new: true }

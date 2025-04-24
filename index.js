@@ -1,6 +1,8 @@
 require("dotenv").config();
 const express = require('express');
 const app = express();
+const path = require("path");
+
 // Add a  stripe key
 // const stripe = require('stripe')('sk_test_51R7YKDDRfbAZZF8HRPJitcD3BIPL8pVv8JDOsVyAJiHK4WLtORzsB3NCyIJUwae5R8fE8UIvfjuVAYY4tYd9K7IZ001uGqFgov');
 // const { v4: uuidv4 } = require('uuid');
@@ -17,6 +19,12 @@ const Department = require('./routes/DepartmentRoutes')
 const doctorDashboard = require('./routes/DoctorDashboard')
 const bodyParser = require("body-parser");
 const port = process.env.PORT || 4000;
+
+
+
+
+// Serve the uploads folder publicly
+
 
 
 // const flash = require("connect-flash");
@@ -37,7 +45,7 @@ app.use(
 //   }
 //   next();
 // });
-
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use(express.json());
 app.use(cookieParser());
