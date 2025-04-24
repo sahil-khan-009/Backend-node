@@ -53,13 +53,14 @@ router.post("/UploadUserReport/:appointmentId",isdoctorLoggedin,upload.single("r
       const { appointmentId } = req.params;
       const doctorId = req.doctor._id;
       // const filePath = req.file.path; // this contains the full path to uploaded file
-      const relativePath = `uploads/reports/${req.file.filename}`;
+      // const relativePath = `uploads/reports/${req.file.filename}`;
+      const filePath = `uploads/reports/${req.file.filename}`;
 
       const updatedAppointment = await Appointment.findByIdAndUpdate(
         appointmentId,
         {
           $set: {
-            report: relativePath, // Store file path in DB
+            report: filePath, // Store file path in DB
           },
         },
         { new: true }
