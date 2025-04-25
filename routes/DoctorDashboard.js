@@ -80,5 +80,33 @@ router.post("/UploadUserReport/:appointmentId",isdoctorLoggedin,upload.single("r
     }
   }
 );
+router.patch("/videStatus/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { videoStatus } = req.body;
+
+    console.log('This is an id ----------', id);
+    console.log('This is video status:', videoStatus);
+
+    const AppointmentId = await Appointment.findByIdAndUpdate(
+      id,
+      { videoStatus },
+      { new: true }
+    );
+
+    if (!AppointmentId) {
+      return res.status(404).json({ message: "Appointment not found" });
+    }
+
+    res.status(200).json({
+      message: "Video status updated successfully",
+      AppointmentId,
+    });
+  } catch (err) {
+    console.log('This is catch error:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 
 module.exports = router;
