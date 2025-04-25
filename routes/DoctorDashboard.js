@@ -116,9 +116,10 @@ router.get('/treatedPatient', isdoctorLoggedin, async (req, res) => {
     const completedAppointments = await Appointment.find({
       doctorId: doctorId,
       videoStatus: "completed",
-      isDeleted: false, // optional, if you want to exclude soft-deleted
-    }) // populate user details if needed
-      .sort({ appointmentDate: -1 });   // latest appointments first
+      isDeleted: false,
+    })
+      .select("-availability -isDeleted -deletedAt -deletedBy -mode -videoCallLink -patientemail -appointmentDate -description") // Excluded fields
+      .sort({ appointmentDate: -1 });
 
     if (completedAppointments.length === 0) {
       return res.status(404).json({ message: "No completed appointments found" });
@@ -133,6 +134,7 @@ router.get('/treatedPatient', isdoctorLoggedin, async (req, res) => {
     return res.status(500).json({ message: "Server error" });
   }
 });
+
 
 
 
