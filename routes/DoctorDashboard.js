@@ -100,7 +100,7 @@ router.patch("/videoStatus/:id", async (req, res) => {
 
     res.status(200).json({
       message: "Video status updated successfully",
-      AppointmentId,
+      // AppointmentId,
     });
   } catch (err) {
     console.log('This is catch error:', err.message);
