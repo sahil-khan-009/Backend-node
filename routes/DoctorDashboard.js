@@ -80,7 +80,7 @@ router.post("/UploadUserReport/:appointmentId",isdoctorLoggedin,upload.single("r
     }
   }
 );
-router.patch("/videStatus/:id", async (req, res) => {
+router.patch("/videoStatus/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const { videoStatus } = req.body;
