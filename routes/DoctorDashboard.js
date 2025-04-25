@@ -99,7 +99,7 @@ router.patch("/videoStatus/:id", async (req, res) => {
     }
 
     res.status(200).json({
-      message: "Video status updated successfully",
+      message: "Appointment  Completed",
       // AppointmentId,
     });
   } catch (err) {
