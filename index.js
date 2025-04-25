@@ -45,7 +45,7 @@ app.use(
 //   }
 //   next();
 // });
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use(express.static(path.join(__dirname, "public")));
 
 
 

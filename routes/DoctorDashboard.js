@@ -6,8 +6,10 @@ const Appointment = require("../models/Appointment");
 // const Department = require("../models/DepartmentSchema");
 const isdoctorLoggedin = require("../middlewares/isDocLoggedin");
 // const Appointment = require("../models/Appointment");
-const upload = require("../middlewares/MulterConfig");
-// const isDocLoggedin = require("../middlewares/isDocLoggedin");
+// const upload = require("../middlewares/MulterConfig");
+const upload = require(".config/multer");
+const path = require("path");
+
 
 router.get("/allAppointments", isdoctorLoggedin, async (req, res) => {
   try {
@@ -46,7 +48,7 @@ router.get("/allAppointments", isdoctorLoggedin, async (req, res) => {
 
 
 
-router.post("/UploadUserReport/:appointmentId", isdoctorLoggedin, upload.single("report"), (err, req, res, next) => {
+router.post("/UploadUserReport/:appointmentId", isdoctorLoggedin, upload.single("image"), (err, req, res, next) => {
   if (err) {
     console.error("Multer upload error:", err);
     return res.status(500).send("Error during file upload.");
