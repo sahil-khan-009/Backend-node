@@ -117,7 +117,7 @@ router.get('/treatedPatient', isdoctorLoggedin, async (req, res) => {
       doctorId: doctorId,
       videoStatus: "completed",
       isDeleted: false, // optional, if you want to exclude soft-deleted
-    }).populate("userId", "patientName") // populate user details if needed
+    }) // populate user details if needed
       .sort({ appointmentDate: -1 });   // latest appointments first
 
     if (completedAppointments.length === 0) {
