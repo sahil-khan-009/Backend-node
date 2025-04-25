@@ -4,12 +4,12 @@ const AppointmentSchema = new mongoose.Schema({
   patientName: {
     type: String,
   },
- 
+
   patientemail: {
     type: String, // Email of the person associated with the appointment
     required: true,
     // unique: true,
-    lowercase: true
+    lowercase: true,
   },
   appointmentDate: {
     type: Date,
@@ -29,68 +29,65 @@ const AppointmentSchema = new mongoose.Schema({
     required: true,
   },
 
-  departmentId: { 
+  departmentId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Department", // Reference to the department model
     required: true,
-
   },
   doctorId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Doctor", // Reference to the Doctor model
     required: true,
   },
-  
-  availability:{
+
+  availability: {
     type: String,
     ref: "Doctor",
     required: true,
   },
 
-isDeleted: {
-  type: Boolean,
-  default: false, // Not deleted by default
-},
+  isDeleted: {
+    type: Boolean,
+    default: false, // Not deleted by default
+  },
 
-deletedAt: {
-  type: Date, // Stores the timestamp of deletion
-  default: null,
-},
+  deletedAt: {
+    type: Date, // Stores the timestamp of deletion
+    default: null,
+  },
 
-deletedBy: {
-  type: mongoose.Schema.Types.ObjectId, // Tracks who deleted it
-  ref: "User",
-  default: null,
-},
+  deletedBy: {
+    type: mongoose.Schema.Types.ObjectId, // Tracks who deleted it
+    ref: "User",
+    default: null,
+  },
 
-mode :{
-  type: String,
-  enum: ["online", "offline"],
-  default: "offline",
+  mode: {
+    type: String,
+    enum: ["online", "offline"],
+    default: "offline",
+  },
+  videoCallLink: {
+    type: String,
+    default: null,
+  },
 
-}
-,
-videoCallLink :{
- type :String,
-  default : null,
+  videoStatus: {
+    type: String,
+    enum: ["pending", "completed"],
+    default: "pending",
+  },
 
-},
+  timeSlot: {
+    type: String,
+    default: null,
+  },
 
-timeSlot:{
-  type:String,
-  default: null,
-
-},
-
-report :{
-  type:String,
-  default : null,
-}
-
-
+  report: {
+    type: String,
+    default: null,
+  },
 });
-
-
 
 const Appointment = mongoose.model("Appointment", AppointmentSchema);
 
