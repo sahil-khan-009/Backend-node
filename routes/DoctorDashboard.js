@@ -44,42 +44,78 @@ router.get("/allAppointments", isdoctorLoggedin, async (req, res) => {
 
 // Patient resport
 
-router.post("/UploadUserReport/:appointmentId",isdoctorLoggedin,upload.single("report"), async (req, res) => {
-  console.log("✅ File Received++++++++++++++++:", req.file);
+// router.post("/UploadUserReport/:appointmentId",isdoctorLoggedin,upload.single("report"), async (req, res) => {
+//   console.log("✅ File Received++++++++++++++++:", req.file);
 
-    try {
-      console.log("✅ File Received--------------------:", req.file);
+//     try {
+//       console.log("✅ File Received--------------------:", req.file);
 
-      const { appointmentId } = req.params;
-      const doctorId = req.doctor._id;
-      // const filePath = req.file.path; // this contains the full path to uploaded file
-      // const relativePath = `uploads/reports/${req.file.filename}`;
-      const filePath = `uploads/reports/${req.file.filename}`;
+//       const { appointmentId } = req.params;
+//       const doctorId = req.doctor._id;
+//       // const filePath = req.file.path; // this contains the full path to uploaded file
+//       // const relativePath = `uploads/reports/${req.file.filename}`;
+//       const filePath = `uploads/reports/${req.file.filename}`;
 
-      const updatedAppointment = await Appointment.findByIdAndUpdate(
-        appointmentId,
-        {
-          $set: {
-            report: filePath, // Store file path in DB
-          },
+//       const updatedAppointment = await Appointment.findByIdAndUpdate(
+//         appointmentId,
+//         {
+//           $set: {
+//             report: filePath, // Store file path in DB
+//           },
+//         },
+//         { new: true }
+//       );
+
+//       if (!updatedAppointment) {
+//         return res.status(404).json({ message: "Appointment not found" });
+//       }
+
+//       res.status(200).json({
+//         message: "Report uploaded successfully",
+//         updatedAppointment,
+//       });
+//     } catch (err) {
+//       console.error("Upload error:", err);
+//       res.status(500).json({ message: "Something went wrong" });
+//     }
+//   }
+// );
+
+// Multer with clodinary
+router.post("/UploadUserReport/:appointmentId", isdoctorLoggedin, upload.single("report"), async (req, res) => {
+  console.log("✅ File Received from Cloudinary:", req.file);
+
+  try {
+    const { appointmentId } = req.params;
+    const doctorId = req.doctor._id;
+
+    const fileUrl = req.file.path; // Cloudinary URL will come here!
+
+    const updatedAppointment = await Appointment.findByIdAndUpdate(
+      appointmentId,
+      {
+        $set: {
+          report: fileUrl, // Save Cloudinary URL in DB
         },
-        { new: true }
-      );
+      },
+      { new: true }
+    );
 
-      if (!updatedAppointment) {
-        return res.status(404).json({ message: "Appointment not found" });
-      }
-
-      res.status(200).json({
-        message: "Report uploaded successfully",
-        updatedAppointment,
-      });
-    } catch (err) {
-      console.error("Upload error:", err);
-      res.status(500).json({ message: "Something went wrong" });
+    if (!updatedAppointment) {
+      return res.status(404).json({ message: "Appointment not found" });
     }
+
+    res.status(200).json({
+      message: "Report uploaded successfully",
+      updatedAppointment,
+    });
+  } catch (err) {
+    console.error("Upload error:", err);
+    res.status(500).json({ message: "Something went wrong" });
   }
-);
+});
+
+
 router.patch("/videoStatus/:id", async (req, res) => {
   try {
     const { id } = req.params;
