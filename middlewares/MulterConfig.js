@@ -34,11 +34,14 @@ const cloudinary = require("../utils/cloudinary") // Adjust the path accordingly
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'reports', // Folder name in your Cloudinary dashboard
-    allowed_formats: ['jpg', 'jpeg', 'png', 'pdf'], // Allowed file types
-    transformation: [{ width: 500, height: 500, crop: 'limit' }], // optional
+    folder: 'reports', 
+    resource_type: 'raw', // ADD THIS
+    type: 'upload',       // ADD THIS
+    allowed_formats: ['jpg', 'jpeg', 'png', 'pdf'],
+    // transformation only applies to images, you might skip it for PDFs
   },
 });
+
 
 const upload = multer({ storage });
 
