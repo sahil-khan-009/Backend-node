@@ -349,6 +349,7 @@ router.get("/completedAppointments", isLoggedIn, async (req, res) => {
       userId,
       report: {$ne:null },
       isDeleted: false,
+      mode: {$ne: "offline"} // Exclude offline appointments}
     })
       // .populate("doctorId", "name email uniqueId")
       // .populate("departmentId", "name")
