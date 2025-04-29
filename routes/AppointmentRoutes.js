@@ -350,8 +350,8 @@ router.get("/completedAppointments", isLoggedIn, async (req, res) => {
       report: {$ne:null },
       isDeleted: false,
     })
-      .populate("doctorId", "name email uniqueId")
-      .populate("departmentId", "name")
+      // .populate("doctorId", "name email uniqueId")
+      // .populate("departmentId", "name")
       .lean();
 
       if (completedAppointments.length === 0) {
