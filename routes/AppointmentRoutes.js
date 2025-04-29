@@ -352,7 +352,7 @@ router.get("/completedAppointments", isLoggedIn, async (req, res) => {
     })
       // .populate("doctorId", "name email uniqueId")
       // .populate("departmentId", "name")
-      .lean();
+      // .lean();
 
       if (completedAppointments.length === 0) {
         return res.status(200).json({ completedAppointments: [] });
