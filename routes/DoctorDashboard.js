@@ -89,7 +89,9 @@ router.post("/UploadUserReport/:appointmentId", isdoctorLoggedin, upload.single(
     const { appointmentId } = req.params;
     const doctorId = req.doctor._id;
 
-    const fileUrl = req.file.path.replace('/upload/', '/upload/fl_attachment:false/'); // Force inline view
+    // const fileUrl = req.file.path.replace('/upload/', '/upload/fl_attachment:false/'); // Force inline view
+    const fileUrl = req.file.path;
+
     // Cloudinary URL will come here!
     const updatedAppointment = await Appointment.findByIdAndUpdate(
       appointmentId,

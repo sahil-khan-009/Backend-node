@@ -45,12 +45,17 @@ const cloudinary = require("../utils/cloudinary") // Adjust the path accordingly
 
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
-  params: {
-    folder: 'reports',
-    resource_type: 'auto', // 🔄 This allows public delivery for PDFs
-    allowed_formats: ['jpg', 'jpeg', 'png', 'pdf'],
+  params: async (req, file) => {
+    const isPDF = file.mimetype === 'application/pdf';
+    return {
+      folder: 'reports',
+      resource_type: isPDF ? 'raw' : 'auto',
+      allowed_formats: ['jpg', 'jpeg', 'png', 'pdf'],
+      public_id: `${Date.now()}-${file.originalname}`,
+    };
   },
 });
+
 
 
 const upload = multer({ storage });
