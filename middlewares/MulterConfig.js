@@ -31,14 +31,24 @@ const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const cloudinary = require("../utils/cloudinary") // Adjust the path accordingly
 
 // Cloudinary Storage Setup
+// const storage = new CloudinaryStorage({
+//   cloudinary: cloudinary,
+//   params: {
+//     folder: 'reports', 
+//     resource_type: 'auto',     // ✅ Let Cloudinary decide and allow inline display
+// , // ADD THIS
+//     type: 'upload',       // ADD THIS
+//     allowed_formats: ['jpg', 'jpeg', 'png', 'pdf'],
+//     // transformation only applies to images, you might skip it for PDFs
+//   },
+// });
+
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'reports', 
-    resource_type: 'auto',     // ✅ Let Cloudinary decide and allow inline display, // ADD THIS
-    type: 'upload',       // ADD THIS
+    folder: 'reports',
+    resource_type: 'auto', // 🔄 This allows public delivery for PDFs
     allowed_formats: ['jpg', 'jpeg', 'png', 'pdf'],
-    // transformation only applies to images, you might skip it for PDFs
   },
 });
 
