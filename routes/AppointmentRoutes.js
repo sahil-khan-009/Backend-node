@@ -337,6 +337,37 @@ router.delete("/deleteAppointment/:id", isLoggedIn, async (req, res) => {
   }
 });
 
+
+
+// Completed Appointments Get Routes
+router.get("/completedAppointments", isLoggedIn, async (req, res) => {
+  try{
+    const userId = req.user._id;
+    console.log("This is userId when get completed appointments is hit", userId);
+
+    const completedAppointments = await Appointment.find({
+      userId,
+      report: {$ne:null },
+      isDeleted: false,
+    })
+      .populate("doctorId", "name email uniqueId")
+      .populate("departmentId", "name")
+      .lean();
+
+      if (completedAppointments.length === 0) {
+        return res.status(200).json({ completedAppointments: [] });
+      }
+      
+
+    return res.status(200).json({ completedAppointments });
+
+  }catch(err){
+    res.status(500).json({ error: err.message });
+  }
+
+});
+
+
 module.exports = router;
 
 // GET API
