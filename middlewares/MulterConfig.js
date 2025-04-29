@@ -35,7 +35,7 @@ const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: 'reports', 
-    resource_type: 'raw', // ADD THIS
+    resource_type: 'auto',     // ✅ Let Cloudinary decide and allow inline display, // ADD THIS
     type: 'upload',       // ADD THIS
     allowed_formats: ['jpg', 'jpeg', 'png', 'pdf'],
     // transformation only applies to images, you might skip it for PDFs
