@@ -119,9 +119,19 @@ router.get("/totalAppointment", async (req, res) => {
 
 router.get("/appointmentChart", async (req, res) => {
   try{
-    const chartData = await Appointment.find({
-      appointmentStatus : {$eq: ["pending", "confirmed", "cancelled"]}
-    });
+    const chartData = await Appointment.aggregate([
+      {
+        $match: {
+          appointmentStatus: { $in: ["pending", "confirmed", "cancelled"] }
+        }
+      },
+      {
+        $group: {
+          _id: "$appointmentStatus",
+          count: { $sum: 1 }
+        }
+      }
+    ]);
     return res.status(200).json(chartData);
 
   }catch(err){
