@@ -115,6 +115,25 @@ router.get("/totalAppointment", async (req, res) => {
   }
 });
 
+// Get Appointment for Charts
+
+router.get("/appointmentChart", async (req, res) => {
+  try{
+    const chartData = await Appointment.find({
+      appointmentStatus : {$eq: ["pending", "confirmed", "cancelled"]}
+    });
+    return res.status(200).json(chartData);
+
+  }catch(err){
+    console.log("this is catch error", err.message);
+    return res.status(500).json({
+      Error: "Internal server error",
+      err: err.message,
+    });
+
+  }
+})
+
 // Update Appointment
 router.put("/appointments/:id", async (req, res) => {
   try {
