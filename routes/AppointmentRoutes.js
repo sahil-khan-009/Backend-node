@@ -368,6 +368,8 @@ router.get("/completedAppointments", isLoggedIn, async (req, res) => {
 });
 
 router.get('/ChatUserID',isLoggedIn,async (req, res) => {
+  
+  console.log("Hit ho raha hai")
   try{
     const appointments = await Appointment.find({ userId: req.user._id })
   .populate("doctorId", "name")
