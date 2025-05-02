@@ -1,29 +1,6 @@
 const jwt = require("jsonwebtoken");
 const userModel = require("../models/Users");
 
-// const jwt = require("jsonwebtoken");
-
-// module.exports = (req, res, next) => {
-//     const authHeader = req.headers.authorization;
-    
-//     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-//         return res.status(401).json({ message: "You need to log in first." });
-//     }
-
-//     const token = authHeader.split(" ")[1]; // Extract token after 'Bearer '
-
-//     jwt.verify(token, process.env.JWT_KEY, (err, decoded) => {
-//         if (err) {
-//             return res.status(403).json({ message: "Invalid or expired token." });
-//         }
-
-//         req.user = decoded; // Store decoded user info in req.user
-//         next(); // Proceed to the next middleware
-//     });
-// }
-
-
-
 
 
 //  ye middleware use tab karna hai jab production pe kaam karna ho yaani live pe
