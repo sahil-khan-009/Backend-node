@@ -62,13 +62,13 @@ module.exports = async function (req, res, next) {
   //     const decoded = jwt.verify(req.cookies.token, process.env.JWT_KEY);
    
   //     // Check if the user exists in the database
-  //     const user = await userModel.findOne({ userEmail: decoded.userEmail }).select("-password");
+  //     const user = await doctorModel.findOne({ email: decoded.email }).select("-password");
   //     if (!user) {
   //       return res.status(404).json({ message: "User not found. Please log in again." });
   //     }
   // // console.log("decoded------------",decoded)
   //     // Attach user to the request object
-  //     req.user = user;
+  //     req.doctor = user;
   
   //     // console.log("it is req.user in Isloggedin Middleware---==",req.user)
   //     next();

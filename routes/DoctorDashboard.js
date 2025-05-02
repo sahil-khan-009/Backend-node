@@ -175,5 +175,30 @@ router.get('/treatedPatient', isdoctorLoggedin, async (req, res) => {
 
 
 
+router.get('/DoctorChatId', isdoctorLoggedin, async (req, res) => {
+  try {
+    const docID = req.doctor._id; // Get doctor ID from the request
+    console.log("This is doctor id:", docID);
+
+    const appointments = await Appointment.find({ doctorId: docID })
+      .populate("departmentId", "name")  // Only if you want department name
+      .lean();
+
+    if (!appointments || appointments.length === 0) {
+      return res.status(404).json({ message: "No appointments found for this doctor" });
+    }
+
+    res.status(200).json({
+      message: "Appointments found successfully",
+      appointments,  // Includes patientName already
+    });
+
+  } catch (err) {
+    console.log("This is catch error:", err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 
 module.exports = router;

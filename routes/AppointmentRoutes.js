@@ -365,8 +365,28 @@ router.get("/completedAppointments", isLoggedIn, async (req, res) => {
   }catch(err){
     res.status(500).json({ error: err.message });
   }
-
 });
+
+router.get('/ChatUserID',isLoggedIn,async (req, res) => {
+  try{
+    const appointments = await Appointment.find({ userId: req.user._id })
+  .populate("doctorId", "name")
+  .populate("departmentId", "name")
+  .lean();
+
+    if (!appointments) {
+      return res.status(404).json({ message: "User not found" });
+    }
+  
+    res.status(200).json({appointments});
+
+  }catch(err){
+    console.error("Error fetching appointments:", err.message);
+    res.status(500).json({ error: err.message });
+
+  }
+
+})
 
 
 module.exports = router;
