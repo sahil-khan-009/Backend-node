@@ -189,7 +189,7 @@ router.get('/DoctorChatId', isdoctorLoggedin, async (req, res) => {
     }
 
     res.status(200).json({
-      message: "Appointments found successfully",
+      role: "Doctor",
       appointments,  // Includes patientName already
     });
 

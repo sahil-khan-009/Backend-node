@@ -380,7 +380,9 @@ router.get('/ChatUserID',isLoggedIn,async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
   
-    res.status(200).json({appointments});
+    res.status(200).json({appointments,
+      role: "user",
+    });
 
   }catch(err){
     console.error("Error fetching appointments:", err.message);
