@@ -201,7 +201,33 @@ router.get('/DoctorChatId', isdoctorLoggedin, async (req, res) => {
 });
 
 
-// router.get('/ChatLoggedInUser', )
+router.get("/loggedInUSer", async (req, res) => {
+  try {
+    const doctorId = req.doctor._id; // Get doctor ID from the request
+
+    if (!doctorId) {
+      return res.status(400).json({ message: "Doctor ID is required." });
+    }
+
+    const LoggedinUser = await Appointment.find(doctorId)
+    .populate("userId", "userName  _id")
+    // Exclude password field
+
+    if (!LoggedinUser) {
+      return res.status(404).json({ message: "LoggedinUser not found." });
+    }
+
+    return res.status(200).json({
+      message: "LoggedinUser fetched successfully",
+      LoggedinUser,
+    });
+  
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 
 
 
