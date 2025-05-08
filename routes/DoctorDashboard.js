@@ -233,6 +233,7 @@ router.get("/loggedInUSer",isdoctorLoggedin, async (req, res) => {
           _id: 0,
           userId: "$user._id",
           userName: "$user.userName",
+          doctorId: "$doctorId",
         },
       },
     ]);
