@@ -181,7 +181,8 @@ router.get('/DoctorChatId', isdoctorLoggedin, async (req, res) => {
     console.log("This is doctor id:", docID);
 
     const appointments = await Appointment.find({ doctorId: docID })
-      .populate("departmentId", "name")  // Only if you want department name
+      .populate("departmentId", "name")
+      .populate("userId", 'userName role _id')  // Only if you want department name
       .lean();
 
     if (!appointments || appointments.length === 0) {
@@ -198,6 +199,9 @@ router.get('/DoctorChatId', isdoctorLoggedin, async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+
+// router.get('/ChatLoggedInUser', )
 
 
 
