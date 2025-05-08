@@ -209,8 +209,9 @@ router.get("/loggedInUSer",isdoctorLoggedin, async (req, res) => {
       return res.status(400).json({ message: "Doctor ID is required." });
     }
 
-    const LoggedinUser = await Appointment.find(doctorId)
-    .populate("userId", "userName  _id")
+    const LoggedinUser = await Appointment.find({ doctorId: req.doctor._id })
+  .populate("userId", "userName _id");
+
     // Exclude password field
 
     if (!LoggedinUser) {
