@@ -201,7 +201,7 @@ router.get('/DoctorChatId', isdoctorLoggedin, async (req, res) => {
 });
 
 
-router.get("/loggedInUSer", async (req, res) => {
+router.get("/loggedInUSer",isdoctorLoggedin, async (req, res) => {
   try {
     const doctorId = req.doctor._id; // Get doctor ID from the request
 
