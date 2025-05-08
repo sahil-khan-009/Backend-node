@@ -209,9 +209,34 @@ router.get("/loggedInUSer",isdoctorLoggedin, async (req, res) => {
       return res.status(400).json({ message: "Doctor ID is required." });
     }
 
-    const LoggedinUser = await Appointment.find({ doctorId: req.doctor._id })
-  .populate("userId", "userName _id");
-
+    const LoggedinUser = await Appointment.aggregate([
+      { $match: { doctorId: req.doctor._id } },
+      {
+        $group: {
+          _id: "$userId", // Group by userId
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "_id",        // _id is actually userId now
+          foreignField: "_id",      // _id in the users collection
+          as: "user"
+        }
+      }
+      ,
+      {
+        $unwind: "$user",
+      },
+      {
+        $project: {
+          _id: 0,
+          userId: "$user._id",
+          userName: "$user.userName",
+        },
+      },
+    ]);
+    
     // Exclude password field
 
     if (!LoggedinUser) {
