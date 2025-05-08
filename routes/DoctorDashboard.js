@@ -214,6 +214,8 @@ router.get("/loggedInUSer",isdoctorLoggedin, async (req, res) => {
       {
         $group: {
           _id: "$userId", // Group by userId
+          doctorId: { $first: "$doctorId" },
+          count: { $sum: 1 }   // Count how many appointments per user
         },
       },
       {
@@ -233,10 +235,11 @@ router.get("/loggedInUSer",isdoctorLoggedin, async (req, res) => {
           _id: 0,
           userId: "$user._id",
           userName: "$user.userName",
-          doctorId: "$doctorId",
+          doctorId: 1,
+          count: 1  // Number of appointments
         },
       },
-    ]);
+    ])
     
     // Exclude password field
 
