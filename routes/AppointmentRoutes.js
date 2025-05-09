@@ -387,7 +387,51 @@ router.get('/ChatUserID',isLoggedIn,async (req, res) => {
   }catch(err){
     console.error("Error fetching appointments:", err.message);
     res.status(500).json({ error: err.message });
+ 
+  }
 
+})  
+
+
+router.get('/appointmentDoctorChat', isLoggedIn ,async (req,res)=>{
+  try{
+    if(!req.user._id) return res.status(500).json({message:"userId is undefined"});
+    console.log("this is userId when get user appointment in appointmentstatus",req.user._id)
+
+    const appointments = await Appointment.aggregate([
+      { $match:{userId: req.user._id, isDeleted: false} },
+      {
+        $group:{
+          _id:"$doctorId",
+          userId: { $first: "$userId" },
+          count: { $sum: 1 }   // Count how many appointments per user
+
+        }
+      },
+      {
+        $lookup:{
+          from: "doctors",
+          localField: "_id",
+          foreignField: "_id",
+          as: "doctorDetails"
+        }
+      },
+      {
+        $unwind: "$doctorDetails"
+      },{
+        $project:{
+          _id: 0,
+          doctorId: "$doctorDetails._id",
+          doctorName: "$doctorDetails.name",
+          userId: 1,
+          count: 1
+
+        }
+      }
+    ])
+  }catch(err){
+    console.log(err);
+    res.status(500).json({ message: "Internal server error" });
   }
 
 })
