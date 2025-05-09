@@ -428,7 +428,17 @@ router.get('/appointmentDoctorChat', isLoggedIn ,async (req,res)=>{
 
         }
       }
-    ])
+    ]);
+
+if(!appointments || appointments.length === 0){
+  return res.status(404).json({message:"No Doctor Chat Appointment found appointments found"})
+}
+
+    res.status(200).json({
+      message:"Chat Appointmet doctor fetched successfully",
+      appointments,
+      role: "user",
+    });
   }catch(err){
     console.log(err);
     res.status(500).json({ message: "Internal server error" });
