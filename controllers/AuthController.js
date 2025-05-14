@@ -122,6 +122,7 @@ module.exports.loginUser = async function (req, res) {
   });
 };
 
+
 // Doctor Login--------------------------------->
 
 module.exports.loginDoctor = async (req, res) => {
