@@ -19,6 +19,7 @@ async function sendGAEvent({ clientId, eventName, params = {} }) {
 
   try {
     await axios.post(url, payload);
+    console.log("This is paylodada ",payload)
     console.log("GA event sent:", eventName);
   } catch (err) {
     console.error("GA event error:", err.message);
