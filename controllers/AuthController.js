@@ -1,8 +1,11 @@
 const bcrypt = require("bcrypt");
 const userModel = require("../models/Users");
-const { generateUserToken, generateDoctorToken} = require("../utils/genratetoken");
+const {
+  generateUserToken,
+  generateDoctorToken,
+} = require("../utils/genratetoken");
 const Doctor = require("../models/DoctorSchema");
-
+const { sendGAEvent } = require("../controllers/analytics");
 module.exports.registerUser = async function (req, res) {
   try {
     const { userName, userEmail, userPassword } = req.body;
@@ -41,29 +44,70 @@ module.exports.registerUser = async function (req, res) {
 
 // Login Module
 
+// module.exports.loginUser = async function (req, res) {
+//   let { userEmail, userPassword } = req.body;
+//   // console.log("This is JWT key ------", process.env.JWT_KEY);
+
+//   let user = await userModel.findOne({ userEmail });
+
+//   // console.log("This is user------------------------------------------- ", user);
+//   if (!user) return res.send("user not found");
+
+//   bcrypt.compare(userPassword, user.userPassword, function (err, result) {
+//     if (err) res.status(500).send(err.message);
+
+//     console.log("result================", result);
+//     if (result) {
+//       let token = generateUserToken(user);
+//       // res.json({  });
+//       // res.cookie("token", token);
+//       res.cookie("token", token, {
+//         //Cookie not working so i am using Session storage from frontend
+//         httpOnly: true, // i am sending cookie manually to frontend and setting up in seesssion storage
+//         secure: true,
+//         sameSite: "lax",
+//         domain: "",
+//       });
+
+//       res.json({
+//         message: "You can login",
+//         token,
+//         role: user.role,
+//         name: user.userName,
+//       });
+//     } else {
+//       return res.send("email or password incorrect");
+//     }
+//   });
+// };
+
 module.exports.loginUser = async function (req, res) {
   let { userEmail, userPassword } = req.body;
-  // console.log("This is JWT key ------", process.env.JWT_KEY);
 
   let user = await userModel.findOne({ userEmail });
-
-  // console.log("This is user------------------------------------------- ", user);
   if (!user) return res.send("user not found");
 
-  bcrypt.compare(userPassword, user.userPassword, function (err, result) {
-    if (err) res.status(500).send(err.message);
+  bcrypt.compare(userPassword, user.userPassword, async function (err, result) {
+    if (err) return res.status(500).send(err.message);
 
-    console.log("result================", result);
     if (result) {
       let token = generateUserToken(user);
-      // res.json({  });
-      // res.cookie("token", token);
+
       res.cookie("token", token, {
-        //Cookie not working so i am using Session storage from frontend
-        httpOnly: true, // i am sending cookie manually to frontend and setting up in seesssion storage
+        httpOnly: true,
         secure: true,
         sameSite: "lax",
         domain: "",
+      });
+
+      // Send login event to GA
+      await sendGAEvent({
+        clientId: user._id.toString(),
+        eventName: "login",
+        params: {
+          method: "email",
+          user_name: user.userName,
+        },
       });
 
       res.json({
@@ -120,14 +164,14 @@ module.exports.loginDoctor = async (req, res) => {
         name: doctor.name,
         email: doctor.email,
         uniqueId: doctor.uniqueId,
-        doctorMongoId : doctor._id
+        doctorMongoId: doctor._id,
       },
     });
   } catch (err) {
     console.error("Login error:", err.message);
     res.status(500).json({ message: "Internal server error" });
   }
-}; 
+};
 
 module.exports.ForgetPassword = async function (req, res) {
   try {
