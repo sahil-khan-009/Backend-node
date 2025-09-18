@@ -437,7 +437,7 @@ router.post("/assignDoctor", async (req, res) => {
     // console.log("reqbosy------",req.body);
     const { departmentId, DoctorId } = req.body;
 
-    if (!DoctorId || !departmentId) {
+    if (!DoctorId.trim() || !departmentId.trim()) {
       return res.status(400).json({ message: "DoctorId or DepartmentId is missing" });
     }
 
