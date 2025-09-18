@@ -6,8 +6,10 @@ const AuthMiddlewares = require("../middlewares/AuthMiddleware");
 const isLoggedIn = require("../middlewares/IsLoggedin");
 const sendEmail = require("../utils/AppointmentMail");
 const userModel = require("../models/Users");
-const { v4: uuidv4 } = require('uuid');
-const stripe = require("stripe")("sk_test_51R7YKDDRfbAZZF8HOLYEtXDV8NmoyvhtVYjSs3coVuCOSmKOsKERkdL0s5wWohRyhHdkN03Y54fM47Cu1hr5qeJo00s8yRHEoY");
+const { v4: uuidv4 } = require("uuid");
+const stripe = require("stripe")(
+  "sk_test_51R7YKDDRfbAZZF8HOLYEtXDV8NmoyvhtVYjSs3coVuCOSmKOsKERkdL0s5wWohRyhHdkN03Y54fM47Cu1hr5qeJo00s8yRHEoY"
+);
 // const { createDailyRoom } = require("../utils/daily");
 // Import the function to create a room
 
@@ -95,7 +97,7 @@ router.get("/totalAppointment", async (req, res) => {
           patientemail: 1,
           appointmentDate: 1,
           appointmentStatus: 1,
-          mode :1,
+          mode: 1,
           registerUser: "$userDetails.userEmail", // ✅ Corrected projection
           doctorName: "$doctorDetails.name",
           doctorEmail: "$doctorDetails.email",
@@ -118,31 +120,29 @@ router.get("/totalAppointment", async (req, res) => {
 // Get Appointment for Charts
 
 router.get("/appointmentChart", async (req, res) => {
-  try{
+  try {
     const chartData = await Appointment.aggregate([
       {
         $match: {
-          appointmentStatus: { $in: ["pending", "confirmed", "cancelled"] }
-        }
+          appointmentStatus: { $in: ["pending", "confirmed", "cancelled"] },
+        },
       },
       {
         $group: {
           _id: "$appointmentStatus",
-          count: { $sum: 1 }
-        }
-      }
+          count: { $sum: 1 },
+        },
+      },
     ]);
     return res.status(200).json(chartData);
-
-  }catch(err){
+  } catch (err) {
     console.log("this is catch error", err.message);
     return res.status(500).json({
       Error: "Internal server error",
       err: err.message,
     });
-
   }
-})
+});
 
 // Update Appointment
 router.put("/appointments/:id", async (req, res) => {
@@ -196,8 +196,6 @@ router.delete("/appointments/:id", async (req, res) => {
 });
 
 //updating status of pending requests
-
-
 
 // router.patch("/appointments/:id/:status/:mode", async (req, res) => {
 //   try {
@@ -269,19 +267,16 @@ router.delete("/appointments/:id", async (req, res) => {
 //   }
 // });
 
-
-
-
 router.patch("/appointments/:id/:status/:mode", async (req, res) => {
   try {
     const { id, status, mode } = req.params;
     const { timeSlot } = req.body;
-     
-// Example (Node.js + Express):
-if (!req.body.timeSlot) {
-  console.log("Time slot is not provided in the request body.",timeSlot);
-  return res.status(400).json({ message: "Time slot is required." });
-}
+
+    // Example (Node.js + Express):
+    if (!req.body.timeSlot) {
+      console.log("Time slot is not provided in the request body.", timeSlot);
+      return res.status(400).json({ message: "Time slot is required." });
+    }
 
     // Validate status
     if (status !== "confirm" && status !== "cancel") {
@@ -308,11 +303,9 @@ if (!req.body.timeSlot) {
       updateFields.videoCallLink = videoCallLink;
     }
 
-    const updateStatus = await Appointment.findByIdAndUpdate(
-      id,
-      updateFields,
-      { new: true }
-    ).populate("doctorId", "name");
+    const updateStatus = await Appointment.findByIdAndUpdate(id, updateFields, {
+      new: true,
+    }).populate("doctorId", "name");
 
     if (!updateStatus) {
       return res.status(404).json({ error: "Appointment not found" });
@@ -327,7 +320,9 @@ if (!req.body.timeSlot) {
     const email = updateStatus.patientemail;
     const message = `Dear ${updateStatus.patientName},
 
-    Your appointment with Dr. ${doctorName} on ${new Date(updateStatus.appointmentDate).toDateString()} at ${timeSlot} has been ${updateStatus.appointmentStatus}.
+    Your appointment with Dr. ${doctorName} on ${new Date(
+      updateStatus.appointmentDate
+    ).toDateString()} at ${timeSlot} has been ${updateStatus.appointmentStatus}.
     
     ${
       videoCallLink
@@ -356,13 +351,6 @@ if (!req.body.timeSlot) {
   }
 });
 
-
-
-
-
-
-
-
 // router.patch("/appointments/:id/:status/:mode", async (req, res) => {
 //   try {
 //     const { id, status,mode } = req.params;
@@ -375,7 +363,6 @@ if (!req.body.timeSlot) {
 //     appointmentStatus: status === "confirm" ? "confirmed" : "cancelled",
 //     videoCallLink:
 //   })
-
 
 // }
 
@@ -428,65 +415,74 @@ if (!req.body.timeSlot) {
 //   }
 // });
 
-
 // <-----------------All Get api Department----------------->
 
 router.get("/getDepartment", async (req, res) => {
-try{
-  const allDepartment = await Department.find().populate("doctors" );
-  console.log("allDepartment", allDepartment);
-  res.status(200).json(allDepartment);
-
-}catch(err){
-  console.log("This is catch error-----", err.message);
-  res.status(500).json({ message: "Server internal error",
- error: err.message,
-   });
-
-}
+  try {
+    const allDepartment = await Department.find().populate("doctors");
+    console.log("allDepartment", allDepartment);
+    res.status(200).json(allDepartment);
+  } catch (err) {
+    console.log("This is catch error-----", err.message);
+    res
+      .status(500)
+      .json({ message: "Server internal error", error: err.message });
+  }
 });
 
+// Api for assigning doctors in department
 
-
-
-router.post("/create-payment-intent", async (req, res) => {
+router.post("/assignDoctor", async (req, res) => {
   try {
-      const { amount, currency } = req.body;
+    console.log("reqbosy------",req.body);
+    const { departmentId, DoctorId } = req.body;
 
-      const paymentIntent = await stripe.paymentIntents.create({
-          amount, // Amount in cents (e.g., 5000 = $50.00)
-          currency,
-          payment_method_types: ["card"], // Supports cards
-      });
+    if (!DoctorId || !departmentId) {
+      return res.status(400).json({ message: "DoctorId or DepartmentId is missing" });
+    }
 
-      res.json({ clientSecret: paymentIntent.client_secret });
-  } catch (error) {
-      res.status(500).json({ error: error.message });
+    const updatedDepartment = await Department.findByIdAndUpdate(
+      departmentId,
+      { $push: { doctors: DoctorId } },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedDepartment) {
+      return res.status(404).json({ message: "Department not found" });
+    }
+
+    return res.status(200).json({
+      message: "Doctor assigned successfully",
+      data: updatedDepartment,
+    });
+
+  } catch (err) {
+    console.error("console error----", err);
+    return res.status(500).json({
+      message: "Internal Server Error",
+      error: err.message,
+    });
   }
 });
 
 
+router.post("/create-payment-intent", async (req, res) => {
+  try {
+    const { amount, currency } = req.body;
+
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount, // Amount in cents (e.g., 5000 = $50.00)
+      currency,
+      payment_method_types: ["card"], // Supports cards
+    });
+
+    res.json({ clientSecret: paymentIntent.client_secret });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 module.exports = router;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // router.post("/payment", async (req, res) => {
 //   try {
