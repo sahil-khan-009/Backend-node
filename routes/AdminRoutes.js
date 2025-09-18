@@ -434,7 +434,7 @@ router.get("/getDepartment", async (req, res) => {
 
 router.post("/assignDoctor", async (req, res) => {
   try {
-    console.log("reqbosy------",req.body);
+    // console.log("reqbosy------",req.body);
     const { departmentId, DoctorId } = req.body;
 
     if (!DoctorId || !departmentId) {
