@@ -274,7 +274,7 @@ router.patch("/appointments/:id/:status/:mode", async (req, res) => {
 
     // Example (Node.js + Express):
     if (!req.body.timeSlot) {
-      console.log("Time slot is not provided in the request body.", timeSlot);
+      console.log("Time slot is not provided in the request body..", timeSlot);
       return res.status(400).json({ message: "Time slot is required." });
     }
 
