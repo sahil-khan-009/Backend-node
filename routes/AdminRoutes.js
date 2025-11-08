@@ -8,7 +8,7 @@ const sendEmail = require("../utils/AppointmentMail");
 const userModel = require("../models/Users");
 const { v4: uuidv4 } = require("uuid");
 const stripe = require("stripe")(
-  "sk_test_51R7YKDDRfbAZZF8HOLYEtXDV8NmoyvhtVYjSs3coVuCOSmKOsKERkdL0s5wWohRyhHdkN03Y54fM47Cu1hr5qeJo00s8yRHEoY"
+  "Follow me on instagram sahilkhan80526"
 );
 // const { createDailyRoom } = require("../utils/daily");
 // Import the function to create a room
