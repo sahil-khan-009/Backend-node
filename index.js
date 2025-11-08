@@ -133,7 +133,7 @@ app.listen(port, ()=>{
 
 
 // // Add a  stripe key
-// // const stripe = require('stripe')('sk_test_51R7YKDDRfbAZZF8HRPJitcD3BIPL8pVv8JDOsVyAJiHK4WLtORzsB3NCyIJUwae5R8fE8UIvfjuVAYY4tYd9K7IZ001uGqFgov');
+// // const stripe = require('stripe')('sk_test_');
 // // const { v4: uuidv4 } = require('uuid');
 // const mongoose = require('mongoose');
 // const cookieParser = require("cookie-parser");
